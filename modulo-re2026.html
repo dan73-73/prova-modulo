@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Retrouvaille Europa 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:#f5f0e8;--warm-white:#faf8f4;--deep-burgundy:#6b1f2a;--burgundy:#8b2635;
+    --gold:#c9973a;--gold-light:#e8c87a;--text-dark:#2a1f1a;--text-mid:#5a4a42;
+    --text-light:#9a8a80;--border:#ddd5c8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--text-dark);min-height:100vh}
+  .lang-bar{background:var(--text-dark);padding:10px 24px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:50}
+  .lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+  .lang-btn:hover{border-color:var(--gold);color:var(--gold-light)}
+  .lang-btn.active{background:var(--deep-burgundy);border-color:var(--deep-burgundy);color:#fff;font-weight:500}
+  .header{background:var(--deep-burgundy);position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,151,58,.15) 0%,transparent 60%),radial-gradient(ellipse at 80% 50%,rgba(201,151,58,.10) 0%,transparent 60%)}
+  .header-inner{max-width:720px;margin:0 auto;padding:52px 32px 44px;position:relative;text-align:center}
+  .header-ornament{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px}
+  .ornament-line{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold-light))}
+  .ornament-line.r{background:linear-gradient(90deg,var(--gold-light),transparent)}
+  .ornament-diamond{width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+  .header-tag{font-size:11px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px}
+  .header-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,5vw,46px);font-weight:600;color:#fff;line-height:1.15}
+  .header-title em{font-style:italic;color:var(--gold-light)}
+  .header-info{display:flex;justify-content:center;gap:20px;margin-top:28px;flex-wrap:wrap}
+  .info-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:4px;padding:8px 16px;font-size:12px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:8px}
+  .info-chip strong{color:var(--gold-light)}
+  .header-subtitle{font-size:13px;color:rgba(255,255,255,.5);letter-spacing:1px;margin-top:16px}
+  .cost-banner{background:var(--warm-white);border-bottom:1px solid var(--border);padding:18px 32px}
+  .cost-banner-inner{max-width:720px;margin:0 auto;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+  .cost-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-right:8px;font-weight:500}
+  .cost-pill{background:var(--cream);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;color:var(--text-dark)}
+  .cost-pill span{font-weight:500;color:var(--burgundy)}
+  .form-wrapper{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+  .form-section{background:#fff;border:1px solid var(--border);border-radius:8px;margin-bottom:24px;overflow:hidden;box-shadow:0 2px 8px rgba(42,31,26,.04);animation:fadeUp .4s ease both}
+  .form-section:nth-child(1){animation-delay:.05s}.form-section:nth-child(2){animation-delay:.10s}
+  .form-section:nth-child(3){animation-delay:.15s}.form-section:nth-child(4){animation-delay:.20s}
+  .form-section:nth-child(5){animation-delay:.25s}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .section-header{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px}
+  .section-number{width:28px;height:28px;background:var(--deep-burgundy);color:#fff;font-size:12px;font-weight:500;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--text-dark)}
+  .section-subtitle{font-size:12px;color:var(--text-light);margin-top:2px}
+  .section-body{padding:24px 28px}
+  .field-grid{display:grid;gap:18px}
+  .field-grid.c2{grid-template-columns:1fr 1fr}
+  .field-group{display:flex;flex-direction:column;gap:6px}
+  .field-label{font-size:12px;font-weight:500;color:var(--text-mid);letter-spacing:.5px}
+  .req{color:var(--burgundy);margin-left:2px}
+  .field-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+  input[type=text],input[type=email],input[type=tel],input[type=date],input[type=time],select,textarea{
+    width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:5px;
+    font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text-dark);
+    background:var(--warm-white);transition:border-color .2s,box-shadow .2s;outline:none;appearance:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--burgundy);box-shadow:0 0 0 3px rgba(107,31,42,.08)}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a8a80' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+  textarea{resize:vertical;min-height:80px}
+  .check-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+  .check-item{position:relative}
+  .check-item input{position:absolute;opacity:0;width:0;height:0}
+  .check-item label{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text-mid);cursor:pointer;transition:all .15s;background:var(--warm-white);user-select:none}
+  .check-item input:checked+label{background:var(--deep-burgundy);border-color:var(--deep-burgundy);color:#fff}
+  .check-item label:hover{border-color:var(--burgundy);color:var(--burgundy)}
+  .check-item input:checked+label:hover{background:var(--burgundy);color:#fff}
+  .pay-block{background:var(--cream);border:1px solid var(--border);border-radius:6px;padding:18px 20px;margin-bottom:16px}
+  .pay-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);font-weight:500;margin-bottom:10px}
+  .iban-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .iban-val{font-family:monospace;font-size:14px;color:var(--text-dark);letter-spacing:1px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:8px 12px;flex:1;min-width:200px}
+  .iban-lbl{font-size:12px;color:var(--text-mid);margin-bottom:8px}
+  .copy-btn{background:none;border:1px solid var(--border);border-radius:4px;padding:8px 14px;font-size:12px;color:var(--text-mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
+  .copy-btn:hover{border-color:var(--burgundy);color:var(--burgundy)}
+  .copy-btn.copied{border-color:#2a7a4f;color:#2a7a4f}
+  .summary-box{background:var(--deep-burgundy);color:#fff;border-radius:6px;padding:20px 22px;margin-bottom:20px}
+  .sum-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--gold-light);margin-bottom:12px}
+  .sum-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.8)}
+  .sum-total{display:flex;justify-content:space-between;font-size:15px;font-weight:500;color:#fff;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2)}
+  .sum-total span:last-child{color:var(--gold-light)}
+  .cro-box{border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px}
+  .cro-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--cream)}
+  .cro-tab{flex:1;padding:11px 10px;font-size:12px;font-family:'DM Sans',sans-serif;border:none;background:none;cursor:pointer;color:var(--text-light);transition:all .15s;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:5px}
+  .cro-tab.active{color:var(--deep-burgundy);font-weight:500;border-bottom-color:var(--deep-burgundy);background:var(--warm-white)}
+  .cro-panel{display:none;padding:18px 20px;background:var(--warm-white)}
+  .cro-panel.active{display:block}
+  .cro-both{display:none;padding:18px 20px;background:var(--warm-white);gap:16px;flex-direction:column}
+  .cro-both.active{display:flex}
+  .cro-hint{font-size:11px;color:var(--text-light);margin-top:8px;line-height:1.5}
+  .upload-area{border:2px dashed var(--border);border-radius:6px;padding:24px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--cream);position:relative}
+  .upload-area:hover{border-color:var(--gold);background:#fffbf2}
+  .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+  .upload-icon{font-size:26px;margin-bottom:6px}
+  .upload-text{font-size:13px;color:var(--text-mid);font-weight:500}
+  .upload-sub{font-size:11px;color:var(--text-light);margin-top:3px}
+  .upload-preview{display:none;margin-top:10px;padding:8px 12px;background:#f0faf5;border:1px solid #b8e0cc;border-radius:5px;font-size:12px;color:#2a7a4f;align-items:center;gap:8px}
+  .upload-preview.show{display:flex}
+  .cro-error{display:none;padding:10px 14px;background:#fff0f0;border:1px solid #f5b8b8;border-radius:5px;font-size:12px;color:#c0392b;margin-top:8px}
+  .cro-error.show{display:block}
+  .intol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .intol-card{border:1px solid var(--border);border-radius:6px;padding:14px;background:var(--warm-white)}
+  .intol-title{font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--text-mid);margin-bottom:10px}
+  .escursione-card{border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:12px;background:var(--warm-white);transition:border-color .2s;cursor:pointer}
+  .escursione-card:hover{border-color:var(--gold)}
+  .escursione-card.selected{border-color:var(--gold);background:#fffbf2}
+  .esc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .esc-check{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .escursione-card.selected .esc-check{background:var(--gold);border-color:var(--gold)}
+  .esc-check svg{display:none}
+  .escursione-card.selected .esc-check svg{display:block}
+  .esc-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--text-dark);flex:1}
+  .esc-desc{font-size:12px;color:var(--text-light);margin-top:4px}
+  .esc-price{font-size:14px;font-weight:500;color:var(--burgundy);white-space:nowrap}
+  .submit-area{text-align:center;margin-top:8px}
+  .submit-btn{background:var(--deep-burgundy);color:#fff;border:none;border-radius:6px;padding:16px 48px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;letter-spacing:.5px;transition:background .2s,transform .15s}
+  .submit-btn:hover{background:var(--burgundy);transform:translateY(-1px)}
+  .submit-note{font-size:11px;color:var(--text-light);margin-top:12px}
+  .overlay{display:none;position:fixed;inset:0;background:rgba(42,31,26,.7);z-index:100;align-items:center;justify-content:center;padding:24px}
+  .overlay.show{display:flex}
+  .overlay-card{background:#fff;border-radius:12px;padding:48px 40px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.3)}
+  .overlay-icon{width:56px;height:56px;background:#f0faf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+  .overlay-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--text-dark);margin-bottom:10px}
+  .overlay-text{font-size:14px;color:var(--text-mid);line-height:1.6}
+  .overlay-close{margin-top:24px;background:var(--deep-burgundy);color:#fff;border:none;border-radius:6px;padding:12px 32px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer}
+  @media(max-width:560px){
+    .field-grid.c2{grid-template-columns:1fr}
+    .intol-grid{grid-template-columns:1fr}
+    .lang-btn{padding:5px 10px;font-size:12px}
+    .section-body{padding:20px 18px}
+    .overlay-card{padding:32px 24px}
+  }
+</style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('it',this)">🇮🇹 Italiano</button>
+  <button class="lang-btn" onclick="setLang('en',this)">🇬🇧 English</button>
+  <button class="lang-btn" onclick="setLang('fr',this)">🇫🇷 Français</button>
+  <button class="lang-btn" onclick="setLang('es',this)">🇪🇸 Español</button>
+  <button class="lang-btn" onclick="setLang('pt',this)">🇵🇹 Português</button>
+</div>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-ornament">
+      <div class="ornament-line"></div><div class="ornament-diamond"></div><div class="ornament-line r"></div>
+    </div>
+    <div class="header-tag" id="h-tag">Modulo di iscrizione</div>
+    <h1 class="header-title">Meeting <em>Retrouvaille</em><br>Europa 2026
+<!-- v2 - ordine corretto: iscrizione prima, escursioni dopo --></h1>
+    <div class="header-info">
+      <div class="info-chip">📅 <strong>DD–DD Mese 2026</strong></div>
+      <div class="info-chip">📍 <strong>Città, Paese</strong></div>
+    </div>
+    <div class="header-subtitle">retrouvaille.europe@gmail.com</div>
+  </div>
+</div>
+
+<div class="cost-banner">
+  <div class="cost-banner-inner">
+    <span class="cost-label" id="h-quota">Quota</span>
+    <div class="cost-pill"><span id="h-couple">Coppia</span> <span>€ 000</span></div>
+    <div class="cost-pill"><span id="h-children">Bambini</span> <span>€ 000</span></div>
+    <div class="cost-pill"><span id="h-priest">Sacerdote</span> <span>€ 000</span></div>
+    <div class="cost-pill" style="font-size:11px;color:var(--text-light)" id="h-note">dalla cena ven. al pranzo dom.</div>
+  </div>
+</div>
+
+<div class="form-wrapper">
+
+  <!-- S1: DATI -->
+  <div class="form-section">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <div><div class="section-title" id="s1-title">Dati dei partecipanti</div><div class="section-subtitle" id="s1-sub">Informazioni personali</div></div>
+    </div>
+    <div class="section-body">
+      <div class="field-grid c2">
+        <div class="field-group">
+          <label class="field-label" id="l-email">Email <span class="req">*</span></label>
+          <input type="email" id="ph-email" placeholder="indirizzo@email.com">
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="l-phone">Telefono <span class="req">*</span></label>
+          <input type="tel" placeholder="+39 000 000 0000">
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="l-husband">Cognome e nome — Marito <span class="req">*</span></label>
+          <input type="text" placeholder="Cognome Nome">
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="l-wife">Cognome e nome — Moglie <span class="req">*</span></label>
+          <input type="text" placeholder="Cognome Nome">
+        </div>
+      </div>
+      <div class="field-grid" style="margin-top:18px">
+        <div class="field-group">
+          <label class="field-label" id="l-priest">Cognome e nome — Sacerdote <span style="font-size:10px;color:var(--text-light);font-style:italic" id="l-ifapp">(se applicabile)</span></label>
+          <input type="text" placeholder="Cognome Nome">
+        </div>
+      </div>
+      <hr class="field-divider">
+      <div class="field-grid c2">
+        <div class="field-group">
+          <label class="field-label" id="l-community">Comunità di appartenenza <span class="req">*</span></label>
+          <select>
+            <option value="" disabled selected id="opt-sel">Seleziona…</option>
+            <optgroup id="og-italy" label="Italia">
+              <option>Italia Nord-Est</option><option>Italia Nord-Ovest</option>
+              <option>Italia Centro</option><option>Italia Sud</option>
+            </optgroup>
+            <optgroup id="og-europe" label="Europa">
+              <option>Spagna – Valencia</option><option>Spagna – Madrid</option>
+              <option>Francia</option><option>Inghilterra e Galles</option>
+              <option>Olanda</option><option>Irlanda</option>
+              <option>Portogallo</option><option>Ucraina</option>
+            </optgroup>
+            <optgroup id="og-other" label="Altro">
+              <option>USA</option><option id="opt-other-comm">Altra comunità</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="l-num">Numero partecipanti <span class="req">*</span></label>
+          <select id="numP" onchange="updateSummary()">
+            <option value="" disabled selected>—</option>
+            <option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-grid c2" style="margin-top:18px">
+        <div class="field-group">
+          <label class="field-label" id="l-langs">Lingue parlate <span class="req">*</span></label>
+          <div class="check-group">
+            <div class="check-item"><input type="checkbox" id="l-it"><label for="l-it">🇮🇹 Italiano</label></div>
+            <div class="check-item"><input type="checkbox" id="l-en"><label for="l-en">🇬🇧 English</label></div>
+            <div class="check-item"><input type="checkbox" id="l-fr"><label for="l-fr">🇫🇷 Français</label></div>
+            <div class="check-item"><input type="checkbox" id="l-es"><label for="l-es">🇪🇸 Español</label></div>
+            <div class="check-item"><input type="checkbox" id="l-pt"><label for="l-pt">🇵🇹 Português</label></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" id="l-trad">Disponibile a traduzione? <span class="req">*</span></label>
+          <div class="check-group">
+            <div class="check-item"><input type="radio" name="trad" id="t-si"><label for="t-si" id="lbl-yes">Sì</label></div>
+            <div class="check-item"><input type="radio" name="trad" id="t-no"><label for="t-no" id="lbl-no">No</label></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: SOGGIORNO -->
+  <div class="form-section">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <div><div class="section-title" id="s2-title">Soggiorno</div><div class="section-subtitle" id="s2-sub">Arrivo e partenza</div></div>
+    </div>
+    <div class="section-body">
+      <div class="field-grid c2">
+        <div class="field-group"><label class="field-label" id="l-checkin">Data di arrivo <span class="req">*</span></label><input type="date"></div>
+        <div class="field-group"><label class="field-label" id="l-time">Orario di arrivo <span class="req">*</span></label><input type="time"></div>
+        <div class="field-group"><label class="field-label" id="l-checkout">Data di partenza <span class="req">*</span></label><input type="date"></div>
+        <div class="field-group">
+          <label class="field-label" id="l-ages">Età figli partecipanti</label>
+          <input type="text" id="ph-ages" placeholder="Es. 8, 12, 15">
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text-light);margin-top:14px;line-height:1.6" id="extra-note">⚠️ I giorni extra rispetto alle date ufficiali saranno pagati direttamente alla struttura ospitante.</p>
+    </div>
+  </div>
+
+  <!-- S3: INTOLLERANZE -->
+  <div class="form-section">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <div><div class="section-title" id="s3-title">Intolleranze alimentari</div><div class="section-subtitle" id="s3-sub">Esigenze dietetiche</div></div>
+    </div>
+    <div class="section-body">
+      <div class="intol-grid">
+        <div class="intol-card">
+          <div class="intol-title" id="i-hus">Marito / Sacerdote</div>
+          <div class="check-group" style="flex-direction:column;gap:6px">
+            <div class="check-item"><input type="checkbox" id="im-no"><label for="im-no" id="i-none1">Nessuna</label></div>
+            <div class="check-item"><input type="checkbox" id="im-vg"><label for="im-vg" id="i-veg1">Vegetariano</label></div>
+            <div class="check-item"><input type="checkbox" id="im-vn"><label for="im-vn" id="i-vgn1">Vegano</label></div>
+            <div class="check-item"><input type="checkbox" id="im-gl"><label for="im-gl" id="i-glu1">Senza glutine</label></div>
+            <div class="check-item"><input type="checkbox" id="im-la"><label for="im-la" id="i-dai1">Latticini</label></div>
+          </div>
+        </div>
+        <div class="intol-card">
+          <div class="intol-title" id="i-wif">Moglie</div>
+          <div class="check-group" style="flex-direction:column;gap:6px">
+            <div class="check-item"><input type="checkbox" id="iw-no"><label for="iw-no" id="i-none2">Nessuna</label></div>
+            <div class="check-item"><input type="checkbox" id="iw-vg"><label for="iw-vg" id="i-veg2">Vegetariano</label></div>
+            <div class="check-item"><input type="checkbox" id="iw-vn"><label for="iw-vn" id="i-vgn2">Vegano</label></div>
+            <div class="check-item"><input type="checkbox" id="iw-gl"><label for="iw-gl" id="i-glu2">Senza glutine</label></div>
+            <div class="check-item"><input type="checkbox" id="iw-la"><label for="iw-la" id="i-dai2">Latticini</label></div>
+          </div>
+        </div>
+        <div class="intol-card">
+          <div class="intol-title" id="i-chi">Figli</div>
+          <div class="check-group" style="flex-direction:column;gap:6px">
+            <div class="check-item"><input type="checkbox" id="ic-no"><label for="ic-no" id="i-none3">Nessuna</label></div>
+            <div class="check-item"><input type="checkbox" id="ic-vg"><label for="ic-vg" id="i-veg3">Vegetariano</label></div>
+            <div class="check-item"><input type="checkbox" id="ic-vn"><label for="ic-vn" id="i-vgn3">Vegano</label></div>
+            <div class="check-item"><input type="checkbox" id="ic-gl"><label for="ic-gl" id="i-glu3">Senza glutine</label></div>
+            <div class="check-item"><input type="checkbox" id="ic-la"><label for="ic-la" id="i-dai3">Latticini</label></div>
+          </div>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:18px">
+        <label class="field-label" id="l-notes">Note o richieste particolari</label>
+        <textarea id="ph-notes" placeholder="Scrivi qui eventuali note…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: PAGAMENTO ISCRIZIONE -->
+  <div class="form-section">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <div><div class="section-title" id="s4-title">Pagamento iscrizione</div><div class="section-subtitle" id="s4-sub">Conferma CRO obbligatoria</div></div>
+    </div>
+    <div class="section-body">
+
+      <div class="summary-box" id="sumBox" style="display:none">
+        <div class="sum-title" id="sum-title">Riepilogo importi</div>
+        <div id="sumRows"></div>
+        <div class="sum-total"><span id="sum-tot-lbl">Totale stimato</span><span id="sumTotal">€ —</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px" id="sum-note">* il totale escursioni dipende dal numero di persone</div>
+      </div>
+
+      <div class="pay-block">
+        <div class="pay-title" id="iban-r-title">Bonifico iscrizione — IBAN principale</div>
+        <div class="iban-lbl"><span id="iban-own2">Intestato a:</span> <strong>[Nome intestatario iscrizione]</strong></div>
+        <div class="iban-row">
+          <div class="iban-val" id="iban-isc">IT00 X000 0000 0000 0000 0000 000</div>
+          <button class="copy-btn" id="copy-isc" onclick="copyIban('iban-isc',this)">Copia IBAN</button>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light)" id="iban-r-ref">BIC: XXXXXXXXXX · Causale: <em>"Iscrizione Meeting RE2026 – [Cognome coppia]"</em></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" id="l-cro-r">Conferma pagamento iscrizione <span class="req">*</span></label>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;line-height:1.6" id="cro-r-hint">Inserisci il numero CRO, carica la foto della ricevuta, oppure entrambi.</p>
+        <div class="cro-box">
+          <div class="cro-tabs">
+            <button class="cro-tab active" onclick="swCroR('rn')" type="button">🔢 <span id="ct-num-r">N° CRO</span></button>
+            <button class="cro-tab" onclick="swCroR('rf')" type="button">📷 <span id="ct-ph-r">Foto</span></button>
+            <button class="cro-tab" onclick="swCroR('rb')" type="button">✅ <span id="ct-bt-r">Entrambi</span></button>
+          </div>
+          <div class="cro-panel active" id="p-rn">
+            <input type="text" id="cro1" placeholder="Es. 1234567890123456" maxlength="30" style="font-family:monospace;letter-spacing:1px" oninput="clrErr()">
+            <p class="cro-hint" id="cro-hint-txt">Il CRO si trova sulla ricevuta del bonifico — di solito 14–30 cifre.</p>
+          </div>
+          <div class="cro-panel" id="p-rf">
+            <div class="upload-area"><input type="file" accept="image/*,.pdf" onchange="prevFile(this,'prev1')" id="fi1"><div class="upload-icon">📎</div><div class="upload-text" id="up-drag">Clicca o trascina qui</div><div class="upload-sub">JPG, PNG, PDF · max 5MB</div></div>
+            <div class="upload-preview" id="prev1"><span>✓</span><span id="prev1-n"></span></div>
+          </div>
+          <div class="cro-both" id="p-rb">
+            <div class="field-group"><label class="field-label" style="font-size:11px" id="cb-n2">N° CRO</label><input type="text" id="cro2" maxlength="30" style="font-family:monospace;letter-spacing:1px" oninput="clrErr()"></div>
+            <div class="field-group"><label class="field-label" style="font-size:11px" id="cb-p2">Foto ricevuta</label>
+              <div class="upload-area"><input type="file" accept="image/*,.pdf" onchange="prevFile(this,'prev2')" id="fi2"><div class="upload-icon">📎</div><div class="upload-text" id="up-click3">Clicca per caricare</div><div class="upload-sub">JPG, PNG, PDF · max 5MB</div></div>
+              <div class="upload-preview" id="prev2"><span>✓</span><span id="prev2-n"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cro-error" id="cro-err">⚠️ <span id="cro-err-msg">Per completare l'iscrizione è necessario fornire il CRO o la foto della ricevuta.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: ESCURSIONI -->
+  <div class="form-section">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <div>
+        <div class="section-title"><span id="s5-title">Escursioni</span><span id="s5-opt" style="font-size:13px;font-family:'DM Sans';font-weight:300;color:var(--text-light)"> — opzionali</span></div>
+        <div class="section-subtitle" id="s5-sub">Bonifico con IBAN separato</div>
+      </div>
+    </div>
+    <div class="section-body">
+
+      <div class="escursione-card" onclick="toggleEsc(this,'e1',45)">
+        <div class="esc-top">
+          <div class="esc-check"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div style="flex:1"><div class="esc-name" id="e1-name">Escursione A — [Nome da definire]</div><div class="esc-desc" id="e1-desc">Data · Descrizione breve · Durata</div></div>
+          <div class="esc-price">€ 45 / <span id="pp1">pers.</span></div>
+        </div>
+      </div>
+      <div class="escursione-card" onclick="toggleEsc(this,'e2',35)">
+        <div class="esc-top">
+          <div class="esc-check"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div style="flex:1"><div class="esc-name" id="e2-name">Escursione B — [Nome da definire]</div><div class="esc-desc" id="e2-desc">Data · Descrizione breve · Durata</div></div>
+          <div class="esc-price">€ 35 / <span id="pp2">pers.</span></div>
+        </div>
+      </div>
+      <div class="escursione-card" onclick="toggleEsc(this,'e3',50)">
+        <div class="esc-top">
+          <div class="esc-check"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div style="flex:1"><div class="esc-name" id="e3-name">Escursione C — [Nome da definire]</div><div class="esc-desc" id="e3-desc">Data · Descrizione breve · Durata</div></div>
+          <div class="esc-price">€ 50 / <span id="pp3">pers.</span></div>
+        </div>
+      </div>
+
+      <div class="pay-block" style="margin-top:20px">
+        <div class="pay-title" id="iban-e-title">Bonifico escursioni — IBAN dedicato</div>
+        <div class="iban-lbl"><span id="iban-own1">Intestato a:</span> <strong>[Nome intestatario escursioni]</strong></div>
+        <div class="iban-row">
+          <div class="iban-val" id="iban-esc">IT00 X000 0000 0000 0000 0000 000</div>
+          <button class="copy-btn" id="copy-esc" onclick="copyIban('iban-esc',this)">Copia IBAN</button>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-light)" id="iban-e-ref">Causale: <em>"Escursioni Meeting RE2026 – [Cognome coppia]"</em></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" id="l-cro-e">Conferma pagamento escursioni <span style="font-size:10px;color:var(--text-light);font-style:italic" id="l-opt">(facoltativo)</span></label>
+        <p style="font-size:12px;color:var(--text-light);margin-bottom:10px;line-height:1.6" id="cro-e-hint">Se hai già pagato, inserisci il CRO o carica la ricevuta.</p>
+        <div class="cro-box">
+          <div class="cro-tabs">
+            <button class="cro-tab active" onclick="swCroE('en')" type="button">🔢 <span id="ct-num-e">N° CRO</span></button>
+            <button class="cro-tab" onclick="swCroE('ef')" type="button">📷 <span id="ct-ph-e">Foto</span></button>
+            <button class="cro-tab" onclick="swCroE('eb')" type="button">✅ <span id="ct-bt-e">Entrambi</span></button>
+          </div>
+          <div class="cro-panel active" id="p-en">
+            <input type="text" id="ph-cro-e" placeholder="Numero CRO escursioni (facoltativo)" maxlength="30" style="font-family:monospace;letter-spacing:1px;width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:5px;font-size:14px;background:var(--warm-white);outline:none">
+          </div>
+          <div class="cro-panel" id="p-ef">
+            <div class="upload-area"><input type="file" accept="image/*,.pdf" onchange="prevFile(this,'pe-esc')"><div class="upload-icon">📎</div><div class="upload-text" id="up-click1">Clicca per caricare</div><div class="upload-sub">JPG, PNG, PDF · max 5MB</div></div>
+            <div class="upload-preview" id="pe-esc"><span>✓</span><span id="pe-esc-n"></span></div>
+          </div>
+          <div class="cro-both" id="p-eb">
+            <div class="field-group"><label class="field-label" style="font-size:11px" id="cb-n1">N° CRO</label><input type="text" maxlength="30" style="font-family:monospace;letter-spacing:1px;width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:5px;font-size:14px;background:var(--warm-white);outline:none"></div>
+            <div class="field-group"><label class="field-label" style="font-size:11px" id="cb-p1">Foto ricevuta</label><div class="upload-area"><input type="file" accept="image/*,.pdf"><div class="upload-icon">📎</div><div class="upload-text" id="up-click2">Clicca per caricare</div><div class="upload-sub">JPG, PNG, PDF · max 5MB</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-area" style="margin-top:28px">
+        <button class="submit-btn" id="submit-btn" onclick="submitForm()">Invia iscrizione →</button>
+        <div class="submit-note" id="submit-note">Una copia delle risposte verrà inviata all'email fornita</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="overlay-card">
+    <div class="overlay-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#2a7a4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="overlay-title" id="ov-title">Iscrizione inviata!</div>
+    <p class="overlay-text" id="ov-text">Grazie per esserti iscritto al Meeting Retrouvaille Europa 2026.<br>Riceverai una conferma all'email indicata.<br><br>Per info: <strong>retrouvaille.europe@gmail.com</strong></p>
+    <button class="overlay-close" id="ov-close" onclick="document.getElementById('overlay').classList.remove('show')">Chiudi</button>
+  </div>
+</div>
+
+<script>
+const T = {
+  it:{tag:"Modulo di iscrizione",quota:"Quota",couple:"Coppia",children:"Bambini",priest:"Sacerdote",note:"dalla cena ven. al pranzo dom.",s1t:"Dati dei partecipanti",s1s:"Informazioni personali",email:"Email *",phone:"Telefono *",husband:"Cognome e nome — Marito *",wife:"Cognome e nome — Moglie *",prst:"Cognome e nome — Sacerdote",ifapp:"(se applicabile)",community:"Comunità di appartenenza *",selph:"Seleziona…",og_it:"Italia",og_eu:"Europa",og_ot:"Altro",other_comm:"Altra comunità",numpeople:"Numero partecipanti *",langs:"Lingue parlate *",trad:"Disponibile a traduzione? *",yes:"Sì",no:"No",s2t:"Soggiorno",s2s:"Arrivo e partenza",checkin:"Data di arrivo *",arrtime:"Orario di arrivo *",checkout:"Data di partenza *",ages:"Età figli partecipanti",ph_ages:"Es. 8, 12, 15",extranote:"⚠️ I giorni extra rispetto alle date ufficiali saranno pagati direttamente alla struttura ospitante.",s3t:"Intolleranze alimentari",s3s:"Esigenze dietetiche",ihus:"Marito / Sacerdote",iwif:"Moglie",ichi:"Figli",inone:"Nessuna",iveg:"Vegetariano",ivgn:"Vegano",iglu:"Senza glutine",idai:"Latticini",notes:"Note o richieste particolari",ph_notes:"Scrivi qui eventuali note…",s4t:"Pagamento iscrizione",s4s:"Conferma CRO obbligatoria",sum_t:"Riepilogo importi",sum_tot:"Totale stimato",sum_n:"* il totale escursioni dipende dal numero di persone",iban_rt:"Bonifico iscrizione — IBAN principale",iban_own:"Intestato a:",iban_rr:'BIC: XXXXXXXXXX · Causale: "Iscrizione Meeting RE2026 – [Cognome coppia]"',cro_r:"Conferma pagamento iscrizione *",cro_r_hint:"Inserisci il numero CRO, carica la foto della ricevuta, oppure entrambi.",ph_cro:"Es. 1234567890123456",cro_hint:"Il CRO si trova sulla ricevuta del bonifico — di solito 14–30 cifre.",up_drag:"Clicca o trascina qui",up_click:"Clicca per caricare",ct_num:"N° CRO",ct_ph:"Foto",ct_bt:"Entrambi",cro_err:"Per completare l'iscrizione è necessario fornire il CRO o la foto della ricevuta.",s5t:"Escursioni",s5opt:" — opzionali",s5s:"Bonifico con IBAN separato",e1n:"Escursione A — [Nome da definire]",e1d:"Data · Descrizione breve · Durata",e2n:"Escursione B — [Nome da definire]",e2d:"Data · Descrizione breve · Durata",e3n:"Escursione C — [Nome da definire]",e3d:"Data · Descrizione breve · Durata",pp:"pers.",iban_et:"Bonifico escursioni — IBAN dedicato",iban_er:'Causale: "Escursioni Meeting RE2026 – [Cognome coppia]"',cro_e:"Conferma pagamento escursioni",opt:"(facoltativo)",cro_e_hint:"Se hai già pagato, inserisci il CRO o carica la ricevuta.",ph_cro_e:"Numero CRO escursioni (facoltativo)",copy_iban:"Copia IBAN",submit:"Invia iscrizione →",subnote:"Una copia delle risposte verrà inviata all'email fornita",ov_t:"Iscrizione inviata!",ov_txt:"Grazie per esserti iscritto al Meeting Retrouvaille Europa 2026.<br>Riceverai una conferma all'email indicata.<br><br>Per info: <strong>retrouvaille.europe@gmail.com</strong>",close:"Chiudi",sum_couple:"Iscrizione coppia",sum_child:"bambino",sum_children:"bambini"},
+  en:{tag:"Registration form",quota:"Fee",couple:"Couple",children:"Children",priest:"Priest",note:"from Friday dinner to Sunday lunch",s1t:"Participants' details",s1s:"Personal information",email:"Email *",phone:"Phone *",husband:"Surname & name — Husband *",wife:"Surname & name — Wife *",prst:"Surname & name — Priest",ifapp:"(if applicable)",community:"Community *",selph:"Select…",og_it:"Italy",og_eu:"Europe",og_ot:"Other",other_comm:"Other community",numpeople:"Number of participants *",langs:"Languages spoken *",trad:"Available for translation? *",yes:"Yes",no:"No",s2t:"Accommodation",s2s:"Arrival and departure",checkin:"Arrival date *",arrtime:"Arrival time *",checkout:"Departure date *",ages:"Children's ages",ph_ages:"E.g. 8, 12, 15",extranote:"⚠️ Extra days beyond the official meeting dates must be paid directly to the venue.",s3t:"Food intolerances",s3s:"Dietary requirements",ihus:"Husband / Priest",iwif:"Wife",ichi:"Children",inone:"None",iveg:"Vegetarian",ivgn:"Vegan",iglu:"Gluten-free",idai:"Dairy",notes:"Notes or special requests",ph_notes:"Write any notes here…",s4t:"Registration payment",s4s:"CRO confirmation required",sum_t:"Amount summary",sum_tot:"Estimated total",sum_n:"* excursion total depends on number of participants",iban_rt:"Registration transfer — main IBAN",iban_own:"Account holder:",iban_rr:'BIC: XXXXXXXXXX · Reference: "Registration Meeting RE2026 – [Couple surname]"',cro_r:"Registration payment confirmation *",cro_r_hint:"Enter the CRO number, upload a photo of the receipt, or both.",ph_cro:"E.g. 1234567890123456",cro_hint:"The CRO is on your bank transfer receipt — usually 14–30 digits.",up_drag:"Click or drag here",up_click:"Click to upload",ct_num:"CRO No.",ct_ph:"Photo",ct_bt:"Both",cro_err:"Please provide the CRO number or a photo of the receipt to complete registration.",s5t:"Excursions",s5opt:" — optional",s5s:"Separate IBAN for payment",e1n:"Excursion A — [Name TBD]",e1d:"Date · Short description · Duration",e2n:"Excursion B — [Name TBD]",e2d:"Date · Short description · Duration",e3n:"Excursion C — [Name TBD]",e3d:"Date · Short description · Duration",pp:"p.p.",iban_et:"Excursion transfer — dedicated IBAN",iban_er:'Reference: "Excursions Meeting RE2026 – [Couple surname]"',cro_e:"Excursion payment confirmation",opt:"(optional)",cro_e_hint:"If already paid, enter the CRO or upload the receipt.",ph_cro_e:"Excursion CRO number (optional)",copy_iban:"Copy IBAN",submit:"Submit registration →",subnote:"A copy of your responses will be sent to the email provided",ov_t:"Registration submitted!",ov_txt:"Thank you for registering for the Retrouvaille Europe Meeting 2026.<br>You will receive a confirmation at the email provided.<br><br>Contact: <strong>retrouvaille.europe@gmail.com</strong>",close:"Close",sum_couple:"Couple registration",sum_child:"child",sum_children:"children"},
+  fr:{tag:"Formulaire d'inscription",quota:"Tarif",couple:"Couple",children:"Enfants",priest:"Prêtre",note:"du dîner ven. au déjeuner dim.",s1t:"Données des participants",s1s:"Informations personnelles",email:"Email *",phone:"Téléphone *",husband:"Nom et prénom — Mari *",wife:"Nom et prénom — Femme *",prst:"Nom et prénom — Prêtre",ifapp:"(si applicable)",community:"Communauté d'appartenance *",selph:"Sélectionner…",og_it:"Italie",og_eu:"Europe",og_ot:"Autre",other_comm:"Autre communauté",numpeople:"Nombre de participants *",langs:"Langues parlées *",trad:"Disponible pour la traduction ? *",yes:"Oui",no:"Non",s2t:"Hébergement",s2s:"Arrivée et départ",checkin:"Date d'arrivée *",arrtime:"Heure d'arrivée *",checkout:"Date de départ *",ages:"Âge des enfants",ph_ages:"Ex. 8, 12, 15",extranote:"⚠️ Les jours supplémentaires hors des dates officielles seront réglés directement à l'hébergement.",s3t:"Intolérances alimentaires",s3s:"Besoins diététiques",ihus:"Mari / Prêtre",iwif:"Femme",ichi:"Enfants",inone:"Aucune",iveg:"Végétarien",ivgn:"Végétalien",iglu:"Sans gluten",idai:"Produits laitiers",notes:"Notes ou demandes particulières",ph_notes:"Écrivez vos notes ici…",s4t:"Paiement de l'inscription",s4s:"Confirmation CRO obligatoire",sum_t:"Récapitulatif des montants",sum_tot:"Total estimé",sum_n:"* le total excursions dépend du nombre de participants",iban_rt:"Virement inscription — IBAN principal",iban_own:"Titulaire du compte :",iban_rr:'BIC : XXXXXXXXXX · Référence : "Inscription Meeting RE2026 – [Nom du couple]"',cro_r:"Confirmation paiement inscription *",cro_r_hint:"Saisissez le numéro CRO, téléchargez une photo du reçu, ou les deux.",ph_cro:"Ex. 1234567890123456",cro_hint:"Le CRO figure sur le reçu du virement — généralement 14–30 chiffres.",up_drag:"Cliquer ou déposer ici",up_click:"Cliquer pour télécharger",ct_num:"N° CRO",ct_ph:"Photo",ct_bt:"Les deux",cro_err:"Pour finaliser l'inscription, veuillez fournir le CRO ou une photo du reçu.",s5t:"Excursions",s5opt:" — optionnelles",s5s:"Virement avec IBAN séparé",e1n:"Excursion A — [Nom à définir]",e1d:"Date · Description · Durée",e2n:"Excursion B — [Nom à définir]",e2d:"Date · Description · Durée",e3n:"Excursion C — [Nom à définir]",e3d:"Date · Description · Durée",pp:"p.p.",iban_et:"Virement excursions — IBAN dédié",iban_er:'Référence : "Excursions Meeting RE2026 – [Nom du couple]"',cro_e:"Confirmation paiement excursions",opt:"(facultatif)",cro_e_hint:"Si vous avez déjà payé, saisissez le CRO ou téléchargez le reçu.",ph_cro_e:"Numéro CRO excursions (facultatif)",copy_iban:"Copier IBAN",submit:"Envoyer l'inscription →",subnote:"Une copie de vos réponses sera envoyée à l'adresse email fournie",ov_t:"Inscription envoyée !",ov_txt:"Merci pour votre inscription au Meeting Retrouvaille Europa 2026.<br>Vous recevrez une confirmation à l'email indiqué.<br><br>Contact : <strong>retrouvaille.europe@gmail.com</strong>",close:"Fermer",sum_couple:"Inscription couple",sum_child:"enfant",sum_children:"enfants"},
+  es:{tag:"Formulario de inscripción",quota:"Cuota",couple:"Pareja",children:"Niños",priest:"Sacerdote",note:"desde la cena del vie. al almuerzo del dom.",s1t:"Datos de los participantes",s1s:"Información personal",email:"Email *",phone:"Teléfono *",husband:"Apellido y nombre — Marido *",wife:"Apellido y nombre — Esposa *",prst:"Apellido y nombre — Sacerdote",ifapp:"(si aplica)",community:"Comunidad de pertenencia *",selph:"Seleccionar…",og_it:"Italia",og_eu:"Europa",og_ot:"Otro",other_comm:"Otra comunidad",numpeople:"Número de participantes *",langs:"Idiomas hablados *",trad:"¿Disponible para traducción? *",yes:"Sí",no:"No",s2t:"Alojamiento",s2s:"Llegada y salida",checkin:"Fecha de llegada *",arrtime:"Hora de llegada *",checkout:"Fecha de salida *",ages:"Edad de los niños",ph_ages:"Ej. 8, 12, 15",extranote:"⚠️ Los días extra fuera de las fechas oficiales se pagarán directamente al alojamiento.",s3t:"Intolerancias alimentarias",s3s:"Necesidades dietéticas",ihus:"Marido / Sacerdote",iwif:"Esposa",ichi:"Niños",inone:"Ninguna",iveg:"Vegetariano",ivgn:"Vegano",iglu:"Sin gluten",idai:"Lácteos",notes:"Notas o peticiones especiales",ph_notes:"Escriba sus notas aquí…",s4t:"Pago de inscripción",s4s:"Confirmación CRO obligatoria",sum_t:"Resumen de importes",sum_tot:"Total estimado",sum_n:"* el total excursiones depende del número de personas",iban_rt:"Transferencia inscripción — IBAN principal",iban_own:"Titular de la cuenta:",iban_rr:'BIC: XXXXXXXXXX · Concepto: "Inscripción Meeting RE2026 – [Apellido pareja]"',cro_r:"Confirmación pago inscripción *",cro_r_hint:"Introduzca el número CRO, suba una foto del recibo, o ambos.",ph_cro:"Ej. 1234567890123456",cro_hint:"El CRO aparece en el recibo de la transferencia — normalmente 14–30 dígitos.",up_drag:"Haga clic o arrastre aquí",up_click:"Haga clic para subir",ct_num:"N° CRO",ct_ph:"Foto",ct_bt:"Ambos",cro_err:"Para completar la inscripción es necesario proporcionar el CRO o una foto del recibo.",s5t:"Excursiones",s5opt:" — opcionales",s5s:"Transferencia con IBAN separado",e1n:"Excursión A — [Nombre por definir]",e1d:"Fecha · Descripción breve · Duración",e2n:"Excursión B — [Nombre por definir]",e2d:"Fecha · Descripción breve · Duración",e3n:"Excursión C — [Nombre por definir]",e3d:"Fecha · Descripción breve · Duración",pp:"p.p.",iban_et:"Transferencia excursiones — IBAN dedicado",iban_er:'Concepto: "Excursiones Meeting RE2026 – [Apellido pareja]"',cro_e:"Confirmación pago excursiones",opt:"(opcional)",cro_e_hint:"Si ya ha pagado, introduzca el CRO o suba el recibo.",ph_cro_e:"Número CRO excursiones (opcional)",copy_iban:"Copiar IBAN",submit:"Enviar inscripción →",subnote:"Una copia de sus respuestas se enviará al email proporcionado",ov_t:"¡Inscripción enviada!",ov_txt:"Gracias por inscribirse al Meeting Retrouvaille Europa 2026.<br>Recibirá una confirmación en el email indicado.<br><br>Contacto: <strong>retrouvaille.europe@gmail.com</strong>",close:"Cerrar",sum_couple:"Inscripción pareja",sum_child:"niño",sum_children:"niños"},
+  pt:{tag:"Formulário de inscrição",quota:"Quota",couple:"Casal",children:"Crianças",priest:"Padre",note:"do jantar de sex. ao almoço de dom.",s1t:"Dados dos participantes",s1s:"Informação pessoal",email:"Email *",phone:"Telefone *",husband:"Apelido e nome — Marido *",wife:"Apelido e nome — Esposa *",prst:"Apelido e nome — Padre",ifapp:"(se aplicável)",community:"Comunidade de pertença *",selph:"Selecionar…",og_it:"Itália",og_eu:"Europa",og_ot:"Outro",other_comm:"Outra comunidade",numpeople:"Número de participantes *",langs:"Idiomas falados *",trad:"Disponível para tradução? *",yes:"Sim",no:"Não",s2t:"Alojamento",s2s:"Chegada e partida",checkin:"Data de chegada *",arrtime:"Hora de chegada *",checkout:"Data de partida *",ages:"Idade das crianças",ph_ages:"Ex. 8, 12, 15",extranote:"⚠️ Os dias extra fora das datas oficiais serão pagos diretamente ao alojamento.",s3t:"Intolerâncias alimentares",s3s:"Necessidades dietéticas",ihus:"Marido / Padre",iwif:"Esposa",ichi:"Crianças",inone:"Nenhuma",iveg:"Vegetariano",ivgn:"Vegano",iglu:"Sem glúten",idai:"Laticínios",notes:"Notas ou pedidos especiais",ph_notes:"Escreva as suas notas aqui…",s4t:"Pagamento da inscrição",s4s:"Confirmação CRO obrigatória",sum_t:"Resumo dos montantes",sum_tot:"Total estimado",sum_n:"* o total excursões depende do número de participantes",iban_rt:"Transferência inscrição — IBAN principal",iban_own:"Titular da conta:",iban_rr:'BIC: XXXXXXXXXX · Referência: "Inscrição Meeting RE2026 – [Apelido casal]"',cro_r:"Confirmação pagamento inscrição *",cro_r_hint:"Insira o número CRO, carregue uma foto do recibo, ou ambos.",ph_cro:"Ex. 1234567890123456",cro_hint:"O CRO consta no recibo da transferência — geralmente 14–30 dígitos.",up_drag:"Clique ou arraste aqui",up_click:"Clique para carregar",ct_num:"N° CRO",ct_ph:"Foto",ct_bt:"Ambos",cro_err:"Para completar a inscrição é necessário fornecer o CRO ou uma foto do recibo.",s5t:"Excursões",s5opt:" — opcionais",s5s:"Transferência com IBAN separado",e1n:"Excursão A — [Nome a definir]",e1d:"Data · Descrição breve · Duração",e2n:"Excursão B — [Nome a definir]",e2d:"Data · Descrição breve · Duração",e3n:"Excursão C — [Nome a definir]",e3d:"Data · Descrição breve · Duração",pp:"p.p.",iban_et:"Transferência excursões — IBAN dedicado",iban_er:'Referência: "Excursões Meeting RE2026 – [Apelido casal]"',cro_e:"Confirmação pagamento excursões",opt:"(facultativo)",cro_e_hint:"Se já pagou, insira o CRO ou carregue o recibo.",ph_cro_e:"Número CRO excursões (facultativo)",copy_iban:"Copiar IBAN",submit:"Enviar inscrição →",subnote:"Uma cópia das respostas será enviada para o email fornecido",ov_t:"Inscrição enviada!",ov_txt:"Obrigado por se inscrever no Meeting Retrouvaille Europa 2026.<br>Receberá uma confirmação no email indicado.<br><br>Contacto: <strong>retrouvaille.europe@gmail.com</strong>",close:"Fechar",sum_couple:"Inscrição casal",sum_child:"criança",sum_children:"crianças"}
+};
+
+let lang='it';
+const map={'h-tag':'tag','h-quota':'quota','h-couple':'couple','h-children':'children','h-priest':'priest','h-note':'note','s1-title':'s1t','s1-sub':'s1s','l-email':'email','l-phone':'phone','l-husband':'husband','l-wife':'wife','l-priest':'prst','l-ifapp':'ifapp','l-community':'community','opt-sel':'selph','og-italy':'og_it','og-europe':'og_eu','og-other':'og_ot','opt-other-comm':'other_comm','l-num':'numpeople','l-langs':'langs','l-trad':'trad','lbl-yes':'yes','lbl-no':'no','s2-title':'s2t','s2-sub':'s2s','l-checkin':'checkin','l-time':'arrtime','l-checkout':'checkout','l-ages':'ages','extra-note':'extranote','s3-title':'s3t','s3-sub':'s3s','i-hus':'ihus','i-wif':'iwif','i-chi':'ichi','i-none1':'inone','i-none2':'inone','i-none3':'inone','i-veg1':'iveg','i-veg2':'iveg','i-veg3':'iveg','i-vgn1':'ivgn','i-vgn2':'ivgn','i-vgn3':'ivgn','i-glu1':'iglu','i-glu2':'iglu','i-glu3':'iglu','i-dai1':'idai','i-dai2':'idai','i-dai3':'idai','l-notes':'notes','s4-title':'s4t','s4-sub':'s4s','sum-title':'sum_t','sum-tot-lbl':'sum_tot','sum-note':'sum_n','iban-r-title':'iban_rt','iban-own2':'iban_own','iban-r-ref':'iban_rr','l-cro-r':'cro_r','cro-r-hint':'cro_r_hint','cro-hint-txt':'cro_hint','up-drag':'up_drag','up-click3':'up_click','cb-n2':'ct_num','cb-p2':'ct_ph','ct-num-r':'ct_num','ct-ph-r':'ct_ph','ct-bt-r':'ct_bt','cro-err-msg':'cro_err','s5-title':'s5t','s5-opt':'s5opt','s5-sub':'s5s','e1-name':'e1n','e1-desc':'e1d','e2-name':'e2n','e2-desc':'e2d','e3-name':'e3n','e3-desc':'e3d','pp1':'pp','pp2':'pp','pp3':'pp','iban-e-title':'iban_et','iban-own1':'iban_own','iban-e-ref':'iban_er','l-cro-e':'cro_e','l-opt':'opt','cro-e-hint':'cro_e_hint','ct-num-e':'ct_num','ct-ph-e':'ct_ph','ct-bt-e':'ct_bt','up-click1':'up_click','up-click2':'up_click','cb-n1':'ct_num','cb-p1':'ct_ph','copy-isc':'copy_iban','copy-esc':'copy_iban','submit-btn':'submit','submit-note':'subnote','ov-title':'ov_t','ov-text':'ov_txt','ov-close':'close'};
+const phMap={'ph-email':'email','ph-ages':'ph_ages','ph-notes':'ph_notes','ph-cro-e':'ph_cro_e','cro1':'ph_cro','cro2':'ph_cro'};
+const ogMap={'og-italy':'og_it','og-europe':'og_eu','og-other':'og_ot'};
+
+function setLang(l,btn){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.documentElement.lang=l;
+  const t=T[l];
+  for(const[id,key]of Object.entries(map)){const el=document.getElementById(id);if(el&&t[key]!==undefined)el.innerHTML=t[key];}
+  for(const[id,key]of Object.entries(phMap)){const el=document.getElementById(id);if(el&&t[key]!==undefined)el.placeholder=t[key];}
+  for(const[id,key]of Object.entries(ogMap)){const el=document.getElementById(id);if(el&&t[key]!==undefined)el.label=t[key];}
+  updateSummary();
+}
+
+const escs={};
+function toggleEsc(card,id,price){
+  card.classList.toggle('selected');
+  if(card.classList.contains('selected'))escs[id]=price;else delete escs[id];
+  updateSummary();
+}
+
+function updateSummary(){
+  const box=document.getElementById('sumBox'),rowsEl=document.getElementById('sumRows'),totalEl=document.getElementById('sumTotal');
+  const t=T[lang],numP=parseInt(document.getElementById('numP').value)||0,escKeys=Object.keys(escs);
+  if(numP===0&&escKeys.length===0){box.style.display='none';return;}
+  box.style.display='block';
+  let rows='',total=0;
+  if(numP>0){let amt=360,lbl=t.sum_couple;if(numP>2){const b=numP-2;amt+=b*180;lbl+=` + ${b} ${b>1?t.sum_children:t.sum_child}`;}rows+=`<div class="sum-row"><span>${lbl}</span><span>€ ${amt}</span></div>`;total+=amt;}
+  if(escKeys.length>0){const et=Object.values(escs).reduce((a,b)=>a+b,0);rows+=`<div class="sum-row"><span>${escKeys.length} escursion(s) ×1 ${t.pp}</span><span>€ ${et}*</span></div>`;total+=et;}
+  rowsEl.innerHTML=rows;totalEl.textContent=`€ ${total}`;
+}
+
+function swCroR(m){['rn','rf','rb'].forEach(x=>{const p=document.getElementById('p-'+x);if(p)p.classList.remove('active');});document.getElementById('p-'+m)?.classList.add('active');const tabs=document.querySelectorAll('#p-rn').length?document.querySelectorAll('.form-section:nth-child(4) .cro-tabs .cro-tab'):[];['rn','rf','rb'].forEach((x,i)=>tabs[i]?.classList.toggle('active',x===m));}
+function swCroE(m){['en','ef','eb'].forEach(x=>{const p=document.getElementById('p-'+x);if(p)p.classList.remove('active');});document.getElementById('p-'+m)?.classList.add('active');}
+function prevFile(input,previewId){const prev=document.getElementById(previewId),nameEl=document.getElementById(previewId+'-n');if(input.files?.[0]){if(nameEl)nameEl.textContent=input.files[0].name;if(prev)prev.classList.add('show');}}
+function copyIban(id,btn){navigator.clipboard.writeText(document.getElementById(id).textContent.trim()).then(()=>{btn.textContent='✓ '+(T[lang].copy_iban||'');btn.classList.add('copied');setTimeout(()=>{btn.textContent=T[lang].copy_iban||'Copy';btn.classList.remove('copied');},2000);});}
+function clrErr(){document.getElementById('cro-err').classList.remove('show');}
+function submitForm(){
+  const c1=document.getElementById('cro1').value.trim(),c2=document.getElementById('cro2').value.trim();
+  const f1=document.getElementById('fi1')?.files.length>0,f2=document.getElementById('fi2')?.files.length>0;
+  if(!c1&&!c2&&!f1&&!f2){const err=document.getElementById('cro-err');err.classList.add('show');err.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  document.getElementById('overlay').classList.add('show');
+}
+</script>
+</body>
+</html>

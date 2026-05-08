@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestione Iscrizioni — RE2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0d0c;
+  --surface: #181614;
+  --surface2: #211e1b;
+  --surface3: #2a2623;
+  --border: #332e2a;
+  --border2: #3d3733;
+  --gold: #c9973a;
+  --gold2: #e8c87a;
+  --gold-dim: rgba(201,151,58,0.15);
+  --red: #c0392b;
+  --red-dim: rgba(192,57,43,0.15);
+  --green: #27ae60;
+  --green-dim: rgba(39,174,96,0.15);
+  --amber: #e67e22;
+  --amber-dim: rgba(230,126,34,0.15);
+  --blue: #2980b9;
+  --blue-dim: rgba(41,128,185,0.15);
+  --text: #f0ebe4;
+  --text2: #a89880;
+  --text3: #6b5f54;
+  --radius: 8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Geist',sans-serif; min-height:100vh; font-size:14px; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+/* TOPBAR */
+.topbar {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 28px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-logo { font-family:'Instrument Serif',serif; font-size:18px; color:var(--gold2); }
+.topbar-tag { font-size:11px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; padding-left:12px; border-left:1px solid var(--border2); }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:6px; font-family:'Geist',sans-serif; font-size:13px; cursor:pointer; transition:all .15s; border:none; }
+.btn-ghost { background:transparent; border:1px solid var(--border2); color:var(--text2); }
+.btn-ghost:hover { border-color:var(--gold); color:var(--gold2); }
+.btn-primary { background:var(--gold); color:#0f0d0c; font-weight:600; }
+.btn-primary:hover { background:var(--gold2); }
+.btn-danger { background:var(--red-dim); border:1px solid rgba(192,57,43,0.3); color:#e57171; }
+.btn-danger:hover { background:rgba(192,57,43,0.25); }
+
+/* LAYOUT */
+.layout { display:grid; grid-template-columns:220px 1fr; min-height:calc(100vh - 56px); }
+
+/* SIDEBAR */
+.sidebar { background:var(--surface); border-right:1px solid var(--border); padding:20px 0; }
+.sidebar-section { margin-bottom:24px; }
+.sidebar-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); padding:0 20px; margin-bottom:8px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px; font-size:13px; color:var(--text2); cursor:pointer; transition:all .15s; border-left:2px solid transparent; }
+.nav-item:hover { color:var(--text); background:var(--surface2); }
+.nav-item.active { color:var(--gold2); background:var(--gold-dim); border-left-color:var(--gold); }
+.nav-item .badge { margin-left:auto; background:var(--surface3); border-radius:10px; padding:2px 7px; font-size:11px; color:var(--text3); }
+.nav-item.active .badge { background:rgba(201,151,58,0.2); color:var(--gold); }
+
+/* MAIN */
+.main { padding:28px; overflow:auto; }
+
+/* PAGE */
+.page { display:none; }
+.page.active { display:block; }
+
+/* KPI CARDS */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.kpi { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; position:relative; overflow:hidden; }
+.kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.kpi.gold::before { background:var(--gold); }
+.kpi.green::before { background:var(--green); }
+.kpi.amber::before { background:var(--amber); }
+.kpi.red::before { background:var(--red); }
+.kpi-label { font-size:11px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+.kpi-value { font-family:'Instrument Serif',serif; font-size:36px; color:var(--text); line-height:1; }
+.kpi-sub { font-size:12px; color:var(--text3); margin-top:6px; }
+
+/* FILTERS */
+.filters { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+.filter-btn { padding:6px 14px; border-radius:20px; font-size:12px; cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:'Geist',sans-serif; transition:all .15s; }
+.filter-btn:hover { border-color:var(--gold); color:var(--gold2); }
+.filter-btn.active { background:var(--gold-dim); border-color:var(--gold); color:var(--gold2); }
+.search-box { margin-left:auto; display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border2); border-radius:6px; padding:6px 12px; }
+.search-box input { background:transparent; border:none; outline:none; color:var(--text); font-family:'Geist',sans-serif; font-size:13px; width:200px; }
+.search-box input::placeholder { color:var(--text3); }
+
+/* TABLE */
+.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.table-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); }
+.table-title { font-size:13px; font-weight:600; color:var(--text); }
+.table-count { font-size:12px; color:var(--text3); }
+table { width:100%; border-collapse:collapse; }
+thead tr { border-bottom:1px solid var(--border); }
+th { padding:10px 16px; text-align:left; font-size:11px; font-weight:500; color:var(--text3); letter-spacing:1px; text-transform:uppercase; white-space:nowrap; }
+td { padding:12px 16px; border-bottom:1px solid var(--border); font-size:13px; color:var(--text2); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--surface2); }
+.td-name { color:var(--text); font-weight:500; }
+.td-community { font-size:12px; color:var(--text3); }
+
+/* BADGES */
+.badge-status { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:500; }
+.badge-status::before { content:''; width:5px; height:5px; border-radius:50%; }
+.s-paid { background:var(--green-dim); color:#4caf7d; border:1px solid rgba(39,174,96,0.2); }
+.s-paid::before { background:var(--green); }
+.s-pending { background:var(--amber-dim); color:#f0a050; border:1px solid rgba(230,126,34,0.2); }
+.s-pending::before { background:var(--amber); }
+.s-missing { background:var(--red-dim); color:#e57171; border:1px solid rgba(192,57,43,0.2); }
+.s-missing::before { background:var(--red); }
+
+.badge-exc { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:4px; font-size:11px; background:var(--blue-dim); color:#6ab4f5; border:1px solid rgba(41,128,185,0.2); }
+.badge-exc.none { background:var(--surface3); color:var(--text3); border-color:var(--border); }
+
+/* FLAG */
+.flag-badge { display:inline-flex; align-items:center; gap:5px; padding:2px 8px; border-radius:4px; font-size:11px; background:var(--surface3); color:var(--text2); }
+
+/* ROW ACTIONS */
+.row-actions { display:flex; gap:6px; opacity:0; transition:opacity .15s; }
+tr:hover .row-actions { opacity:1; }
+.act-btn { padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer; border:1px solid var(--border2); background:transparent; color:var(--text2); font-family:'Geist',sans-serif; transition:all .15s; }
+.act-btn:hover { border-color:var(--gold); color:var(--gold2); }
+.act-btn.danger:hover { border-color:var(--red); color:#e57171; }
+
+/* DETAIL PANEL */
+.panel-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; }
+.panel-overlay.show { display:flex; justify-content:flex-end; }
+.panel { width:480px; background:var(--surface); height:100vh; overflow-y:auto; border-left:1px solid var(--border); padding:28px; animation:slideIn .2s ease; }
+@keyframes slideIn { from{transform:translateX(100%)} to{transform:translateX(0)} }
+.panel-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; }
+.panel-title { font-family:'Instrument Serif',serif; font-size:22px; color:var(--text); }
+.panel-close { background:transparent; border:1px solid var(--border2); border-radius:6px; padding:6px 10px; color:var(--text3); cursor:pointer; font-size:16px; }
+.panel-close:hover { border-color:var(--border); color:var(--text); }
+.panel-section { margin-bottom:20px; }
+.panel-section-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.panel-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid var(--border); }
+.panel-row:last-child { border-bottom:none; }
+.panel-key { font-size:12px; color:var(--text3); }
+.panel-val { font-size:13px; color:var(--text); text-align:right; max-width:260px; }
+.panel-actions { display:flex; gap:8px; margin-top:24px; flex-wrap:wrap; }
+
+/* STATUS SELECTOR */
+.status-select { background:var(--surface2); border:1px solid var(--border2); border-radius:6px; padding:6px 10px; color:var(--text); font-family:'Geist',sans-serif; font-size:13px; cursor:pointer; outline:none; }
+.status-select:focus { border-color:var(--gold); }
+
+/* FOOD PAGE */
+.food-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.food-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+.food-card-title { font-size:12px; font-weight:600; color:var(--text); margin-bottom:14px; letter-spacing:.5px; }
+.food-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.food-item:last-child { border-bottom:none; }
+.food-count { font-family:'Instrument Serif',serif; font-size:20px; color:var(--gold2); }
+
+/* EXCURSION PAGE */
+.exc-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.exc-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+.exc-card-name { font-family:'Instrument Serif',serif; font-size:18px; color:var(--text); margin-bottom:4px; }
+.exc-stat { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.exc-stat:last-child { border-bottom:none; }
+.exc-stat-val { color:var(--gold2); font-weight:500; }
+
+/* PAYMENT PAGE */
+.pay-summary { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:28px; }
+.pay-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+.pay-card-title { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--text3); margin-bottom:16px; }
+.pay-amount { font-family:'Instrument Serif',serif; font-size:32px; color:var(--gold2); margin-bottom:4px; }
+.pay-sub { font-size:12px; color:var(--text3); }
+.pay-breakdown { margin-top:14px; }
+.pay-row { display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px solid var(--border); }
+.pay-row:last-child { border-bottom:none; }
+
+/* MODAL: ADD */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:300; align-items:center; justify-content:center; }
+.modal-overlay.show { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:28px; width:560px; max-height:90vh; overflow-y:auto; }
+.modal-title { font-family:'Instrument Serif',serif; font-size:22px; color:var(--text); margin-bottom:20px; }
+.modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.modal-field { display:flex; flex-direction:column; gap:6px; }
+.modal-field.full { grid-column:span 2; }
+.modal-label { font-size:11px; color:var(--text3); letter-spacing:.5px; }
+.modal-input { background:var(--surface2); border:1px solid var(--border2); border-radius:6px; padding:9px 12px; color:var(--text); font-family:'Geist',sans-serif; font-size:13px; outline:none; }
+.modal-input:focus { border-color:var(--gold); }
+.modal-select { background:var(--surface2); border:1px solid var(--border2); border-radius:6px; padding:9px 12px; color:var(--text); font-family:'Geist',sans-serif; font-size:13px; outline:none; cursor:pointer; }
+.modal-select:focus { border-color:var(--gold); }
+.modal-footer { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+
+/* EMPTY STATE */
+.empty { text-align:center; padding:60px 20px; color:var(--text3); }
+.empty-icon { font-size:40px; margin-bottom:12px; }
+.empty-text { font-size:14px; }
+
+/* TOAST */
+.toast { position:fixed; bottom:24px; right:24px; background:var(--surface); border:1px solid var(--border2); border-radius:8px; padding:12px 18px; font-size:13px; color:var(--text); z-index:500; display:none; align-items:center; gap:10px; box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+.toast.show { display:flex; animation:toastIn .2s ease; }
+@keyframes toastIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.toast-dot { width:8px; height:8px; border-radius:50%; }
+
+/* PROGRESS BAR */
+.progress-bar { background:var(--surface2); border-radius:4px; height:6px; margin-top:8px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:4px; background:var(--gold); transition:width .3s; }
+
+/* SECTION TITLE */
+.section-title { font-family:'Instrument Serif',serif; font-size:22px; color:var(--text); margin-bottom:6px; }
+.section-sub { font-size:12px; color:var(--text3); margin-bottom:24px; }
+
+@media(max-width:900px) {
+  .layout { grid-template-columns:1fr; }
+  .sidebar { display:none; }
+  .kpi-grid { grid-template-columns:1fr 1fr; }
+  .food-grid, .exc-cards { grid-template-columns:1fr; }
+  .pay-summary { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">Retrouvaille</div>
+    <div class="topbar-tag">Gestione Iscrizioni 2026</div>
+  </div>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="exportCSV()">⬇ Esporta CSV</button>
+    <button class="btn btn-primary" onclick="openAddModal()">+ Aggiungi iscrizione</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Pannello</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)">
+        <span>📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('iscrizioni',this)">
+        <span>👥</span> Iscrizioni
+        <span class="badge" id="nav-badge-isc">0</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Dettagli</div>
+      <div class="nav-item" onclick="showPage('pagamenti',this)">
+        <span>💶</span> Pagamenti
+      </div>
+      <div class="nav-item" onclick="showPage('escursioni',this)">
+        <span>🗺️</span> Escursioni
+      </div>
+      <div class="nav-item" onclick="showPage('alimentare',this)">
+        <span>🍽️</span> Alimentare
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Utilità</div>
+      <div class="nav-item" onclick="exportCSV()">
+        <span>📥</span> Esporta CSV
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-title">Dashboard</div>
+      <div class="section-sub" id="dash-date">—</div>
+
+      <div class="kpi-grid">
+        <div class="kpi gold">
+          <div class="kpi-label">Iscrizioni totali</div>
+          <div class="kpi-value" id="kpi-total">0</div>
+          <div class="kpi-sub">coppie registrate</div>
+          <div class="progress-bar"><div class="progress-fill" id="kpi-prog" style="width:0%"></div></div>
+        </div>
+        <div class="kpi green">
+          <div class="kpi-label">Pagamenti confermati</div>
+          <div class="kpi-value" id="kpi-paid">0</div>
+          <div class="kpi-sub" id="kpi-paid-sub">— coppie</div>
+        </div>
+        <div class="kpi amber">
+          <div class="kpi-label">In attesa CRO</div>
+          <div class="kpi-value" id="kpi-pending">0</div>
+          <div class="kpi-sub">da verificare</div>
+        </div>
+        <div class="kpi red">
+          <div class="kpi-label">Senza pagamento</div>
+          <div class="kpi-value" id="kpi-missing">0</div>
+          <div class="kpi-sub">bonifico non ricevuto</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <!-- Ultime iscrizioni -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Ultime iscrizioni</div>
+            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="showPage('iscrizioni',document.querySelector('.nav-item:nth-child(2)'))">Vedi tutte →</button>
+          </div>
+          <table>
+            <thead><tr><th>Coppia</th><th>Comunità</th><th>Stato</th></tr></thead>
+            <tbody id="recent-tbody"></tbody>
+          </table>
+        </div>
+        <!-- Riepilogo economico -->
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Riepilogo economico</div></div>
+          <div style="padding:16px">
+            <div class="pay-row"><span style="color:var(--text2)">Incasso iscrizioni (stimato)</span><span style="color:var(--gold2);font-weight:600" id="sum-reg">€ 0</span></div>
+            <div class="pay-row"><span style="color:var(--text2)">Incasso escursioni (stimato)</span><span style="color:var(--gold2);font-weight:600" id="sum-exc">€ 0</span></div>
+            <div class="pay-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border2)"><span style="color:var(--text);font-weight:600">Totale stimato</span><span style="color:var(--gold2);font-family:'Instrument Serif',serif;font-size:22px" id="sum-total">€ 0</span></div>
+            <div style="margin-top:16px">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase">Escursioni selezionate</div>
+              <div class="pay-row"><span style="color:var(--text2)">Escursione A</span><span id="exc-a-cnt" style="color:var(--text)">0 partecipanti</span></div>
+              <div class="pay-row"><span style="color:var(--text2)">Escursione B</span><span id="exc-b-cnt" style="color:var(--text)">0 partecipanti</span></div>
+              <div class="pay-row"><span style="color:var(--text2)">Escursione C</span><span id="exc-c-cnt" style="color:var(--text)">0 partecipanti</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ISCRIZIONI PAGE -->
+    <div class="page" id="page-iscrizioni">
+      <div class="section-title">Iscrizioni</div>
+      <div class="section-sub">Elenco completo dei partecipanti registrati</div>
+
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterTable('all',this)">Tutti</button>
+        <button class="filter-btn" onclick="filterTable('paid',this)">✓ Pagato</button>
+        <button class="filter-btn" onclick="filterTable('pending',this)">⏳ In attesa</button>
+        <button class="filter-btn" onclick="filterTable('missing',this)">✗ Mancante</button>
+        <div class="search-box">
+          <span style="color:var(--text3)">🔍</span>
+          <input type="text" placeholder="Cerca coppia, comunità…" oninput="searchTable(this.value)">
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <div class="table-title">Partecipanti registrati</div>
+          <div class="table-count" id="table-count">0 iscrizioni</div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Coppia</th>
+              <th>Comunità</th>
+              <th>Lingue</th>
+              <th>Persone</th>
+              <th>Escursioni</th>
+              <th>Pagamento</th>
+              <th>CRO</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="main-tbody"></tbody>
+        </table>
+        <div class="empty" id="empty-state" style="display:none">
+          <div class="empty-icon">📋</div>
+          <div class="empty-text">Nessuna iscrizione trovata</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGAMENTI PAGE -->
+    <div class="page" id="page-pagamenti">
+      <div class="section-title">Pagamenti</div>
+      <div class="section-sub">Monitoraggio bonifici iscrizione ed escursioni</div>
+
+      <div class="pay-summary">
+        <div class="pay-card">
+          <div class="pay-card-title">Iscrizioni — IBAN Principale</div>
+          <div class="pay-amount" id="pay-reg-amount">€ 0</div>
+          <div class="pay-sub" id="pay-reg-sub">0 bonifici confermati</div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="pay-reg-prog" style="width:0%"></div></div>
+        </div>
+        <div class="pay-card">
+          <div class="pay-card-title">Escursioni — IBAN Dedicato</div>
+          <div class="pay-amount" id="pay-exc-amount">€ 0</div>
+          <div class="pay-sub" id="pay-exc-sub">0 bonifici confermati</div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="pay-exc-prog" style="width:0%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Dettaglio pagamenti</div></div>
+        <table>
+          <thead><tr><th>Coppia</th><th>Iscrizione</th><th>CRO Iscrizione</th><th>Escursioni</th><th>CRO Escursioni</th><th>Azione</th></tr></thead>
+          <tbody id="pay-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ESCURSIONI PAGE -->
+    <div class="page" id="page-escursioni">
+      <div class="section-title">Escursioni</div>
+      <div class="section-sub">Riepilogo partecipanti per ogni escursione opzionale</div>
+
+      <div class="exc-cards">
+        <div class="exc-card">
+          <div class="exc-card-name">Escursione A</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">[Nome da definire] · € 45/pers.</div>
+          <div class="exc-stat"><span style="color:var(--text2)">Partecipanti</span><span class="exc-stat-val" id="exc-a-p">0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Incasso stimato</span><span class="exc-stat-val" id="exc-a-e">€ 0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Pagato</span><span class="exc-stat-val" id="exc-a-paid">0</span></div>
+        </div>
+        <div class="exc-card">
+          <div class="exc-card-name">Escursione B</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">[Nome da definire] · € 35/pers.</div>
+          <div class="exc-stat"><span style="color:var(--text2)">Partecipanti</span><span class="exc-stat-val" id="exc-b-p">0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Incasso stimato</span><span class="exc-stat-val" id="exc-b-e">€ 0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Pagato</span><span class="exc-stat-val" id="exc-b-paid">0</span></div>
+        </div>
+        <div class="exc-card">
+          <div class="exc-card-name">Escursione C</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px">[Nome da definire] · € 50/pers.</div>
+          <div class="exc-stat"><span style="color:var(--text2)">Partecipanti</span><span class="exc-stat-val" id="exc-c-p">0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Incasso stimato</span><span class="exc-stat-val" id="exc-c-e">€ 0</span></div>
+          <div class="exc-stat"><span style="color:var(--text2)">Pagato</span><span class="exc-stat-val" id="exc-c-paid">0</span></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Chi partecipa a quale escursione</div></div>
+        <table>
+          <thead><tr><th>Coppia</th><th>Persone</th><th>Esc. A</th><th>Esc. B</th><th>Esc. C</th><th>Pagamento esc.</th></tr></thead>
+          <tbody id="exc-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ALIMENTARE PAGE -->
+    <div class="page" id="page-alimentare">
+      <div class="section-title">Intolleranze alimentari</div>
+      <div class="section-sub">Riepilogo per il catering — aggiornato in automatico</div>
+
+      <div class="food-grid">
+        <div class="food-card">
+          <div class="food-card-title">🥩 Marito / Sacerdote</div>
+          <div class="food-item"><span style="color:var(--text2)">Vegetariano</span><span class="food-count" id="f-hus-veg">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Vegano</span><span class="food-count" id="f-hus-vgn">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Senza glutine</span><span class="food-count" id="f-hus-glu">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Latticini</span><span class="food-count" id="f-hus-dai">0</span></div>
+        </div>
+        <div class="food-card">
+          <div class="food-card-title">👩 Moglie</div>
+          <div class="food-item"><span style="color:var(--text2)">Vegetariana</span><span class="food-count" id="f-wif-veg">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Vegana</span><span class="food-count" id="f-wif-vgn">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Senza glutine</span><span class="food-count" id="f-wif-glu">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Latticini</span><span class="food-count" id="f-wif-dai">0</span></div>
+        </div>
+        <div class="food-card">
+          <div class="food-card-title">👧 Figli</div>
+          <div class="food-item"><span style="color:var(--text2)">Vegetariano</span><span class="food-count" id="f-chi-veg">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Vegano</span><span class="food-count" id="f-chi-vgn">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Senza glutine</span><span class="food-count" id="f-chi-glu">0</span></div>
+          <div class="food-item"><span style="color:var(--text2)">Latticini</span><span class="food-count" id="f-chi-dai">0</span></div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Dettaglio intolleranze per coppia</div></div>
+        <table>
+          <thead><tr><th>Coppia</th><th>Marito / Sacer.</th><th>Moglie</th><th>Figli</th><th>Note</th></tr></thead>
+          <tbody id="food-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- DETAIL PANEL -->
+<div class="panel-overlay" id="panel-overlay" onclick="if(event.target===this)closePanel()">
+  <div class="panel" id="detail-panel">
+    <div class="panel-top">
+      <div class="panel-title" id="panel-name">—</div>
+      <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <div id="panel-content"></div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal">
+    <div class="modal-title">Nuova iscrizione</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <label class="modal-label">COGNOME NOME — MARITO *</label>
+        <input class="modal-input" id="f-husband" placeholder="Rossi Mario">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">COGNOME NOME — MOGLIE *</label>
+        <input class="modal-input" id="f-wife" placeholder="Rossi Anna">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">EMAIL</label>
+        <input class="modal-input" id="f-email" type="email" placeholder="email@esempio.com">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">TELEFONO</label>
+        <input class="modal-input" id="f-phone" placeholder="+39 000 000 0000">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">COMUNITÀ</label>
+        <select class="modal-select" id="f-community">
+          <option value="">Seleziona…</option>
+          <optgroup label="Italia">
+            <option>Italia Nord-Est</option><option>Italia Nord-Ovest</option>
+            <option>Italia Centro</option><option>Italia Sud</option>
+          </optgroup>
+          <optgroup label="Europa">
+            <option>Spagna – Valencia</option><option>Spagna – Madrid</option>
+            <option>Francia</option><option>Inghilterra e Galles</option>
+            <option>Olanda</option><option>Irlanda</option>
+            <option>Portogallo</option><option>Ucraina</option>
+          </optgroup>
+          <optgroup label="Altro"><option>USA</option><option>Altra comunità</option></optgroup>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">N° PARTECIPANTI</label>
+        <select class="modal-select" id="f-num">
+          <option value="2">2</option><option value="3">3</option>
+          <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">STATO PAGAMENTO ISC.</label>
+        <select class="modal-select" id="f-paystatus">
+          <option value="missing">Bonifico non ricevuto</option>
+          <option value="pending">CRO inviato — da verificare</option>
+          <option value="paid">Pagamento confermato</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">CRO ISCRIZIONE</label>
+        <input class="modal-input" id="f-cro" placeholder="Numero CRO">
+      </div>
+      <div class="modal-field full">
+        <label class="modal-label">ESCURSIONI (separa con virgola: A, B, C)</label>
+        <input class="modal-input" id="f-exc" placeholder="Es. A, C">
+      </div>
+      <div class="modal-field full">
+        <label class="modal-label">INTOLLERANZE — MARITO</label>
+        <input class="modal-input" id="f-intol-h" placeholder="Es. Vegetariano, Senza glutine">
+      </div>
+      <div class="modal-field full">
+        <label class="modal-label">INTOLLERANZE — MOGLIE</label>
+        <input class="modal-input" id="f-intol-w" placeholder="Es. Vegana">
+      </div>
+      <div class="modal-field full">
+        <label class="modal-label">NOTE</label>
+        <input class="modal-input" id="f-notes" placeholder="Note libere…">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAddModal()">Annulla</button>
+      <button class="btn btn-primary" onclick="addRegistration()">Salva iscrizione</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-dot" id="toast-dot"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────
+let registrations = JSON.parse(localStorage.getItem('re2026') || '[]');
+let activeFilter = 'all';
+let searchQuery = '';
+let editingId = null;
+
+// Demo data if empty
+if (registrations.length === 0) {
+  registrations = [
+    { id:1, husband:'Bianchi Marco', wife:'Bianchi Sara', email:'bianchi@email.it', phone:'+39 333 111 2222', community:'Italia Nord-Est', num:2, payStatus:'paid', cro:'12345678901234', excPayStatus:'paid', croPay:'98765432109876', excursions:['A','B'], intolH:'', intolW:'Senza glutine', intolC:'', notes:'', date:'2026-01-15' },
+    { id:2, husband:'Ferrari Luigi', wife:'Ferrari Maria', email:'ferrari@email.it', phone:'+39 347 222 3333', community:'Italia Centro', num:4, payStatus:'pending', cro:'55544433322211', excPayStatus:'missing', croPay:'', excursions:['C'], intolH:'Vegetariano', intolW:'', intolC:'Vegano', notes:'Bambini di 8 e 10 anni', date:'2026-01-18' },
+    { id:3, husband:'Müller Hans', wife:'Müller Eva', email:'muller@email.de', phone:'+49 151 333 4444', community:'Olanda', num:2, payStatus:'missing', cro:'', excPayStatus:'missing', croPay:'', excursions:[], intolH:'', intolW:'Latticini', intolC:'', notes:'', date:'2026-01-20' },
+    { id:4, husband:'Dupont Jean', wife:'Dupont Claire', email:'dupont@email.fr', phone:'+33 6 44 55 66 77', community:'Francia', num:3, payStatus:'paid', cro:'77788899900011', excPayStatus:'paid', croPay:'11122233344455', excursions:['A','B','C'], intolH:'', intolW:'', intolC:'Senza glutine', notes:'1 bambino, 7 anni', date:'2026-01-22' },
+    { id:5, husband:'Santos João', wife:'Santos Ana', email:'santos@email.pt', phone:'+351 91 555 6666', community:'Portogallo', num:2, payStatus:'pending', cro:'33322211100099', excPayStatus:'missing', croPay:'', excursions:['A'], intolH:'Vegano', intolW:'Vegana', intolC:'', notes:'', date:'2026-01-25' },
+  ];
+  saveData();
+}
+
+function saveData() {
+  localStorage.setItem('re2026', JSON.stringify(registrations));
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  renderAll();
+}
+
+// ── RENDER ──────────────────────────────────────────────────────
+function renderAll() {
+  renderKPIs();
+  renderMainTable();
+  renderPayments();
+  renderExcursions();
+  renderFood();
+  renderRecent();
+  renderSummary();
+}
+
+function getFiltered() {
+  return registrations.filter(r => {
+    const matchFilter = activeFilter === 'all' || r.payStatus === activeFilter;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || r.husband.toLowerCase().includes(q) || r.wife.toLowerCase().includes(q) || r.community.toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+}
+
+function renderKPIs() {
+  const total = registrations.length;
+  const paid = registrations.filter(r => r.payStatus === 'paid').length;
+  const pending = registrations.filter(r => r.payStatus === 'pending').length;
+  const missing = registrations.filter(r => r.payStatus === 'missing').length;
+  const cap = 50;
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-paid').textContent = paid;
+  document.getElementById('kpi-paid-sub').textContent = `${Math.round(paid/Math.max(total,1)*100)}% del totale`;
+  document.getElementById('kpi-pending').textContent = pending;
+  document.getElementById('kpi-missing').textContent = missing;
+  document.getElementById('kpi-prog').style.width = Math.min(100, Math.round(total/cap*100))+'%';
+  document.getElementById('nav-badge-isc').textContent = total;
+  document.getElementById('dash-date').textContent = 'Aggiornato: ' + new Date().toLocaleDateString('it-IT', {day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function statusBadge(s) {
+  if(s==='paid') return '<span class="badge-status s-paid">Confermato</span>';
+  if(s==='pending') return '<span class="badge-status s-pending">In attesa</span>';
+  return '<span class="badge-status s-missing">Mancante</span>';
+}
+
+function excBadge(excs) {
+  if(!excs || excs.length===0) return '<span class="badge-exc none">Nessuna</span>';
+  return excs.map(e => `<span class="badge-exc">${e}</span>`).join(' ');
+}
+
+function langFlags(comm) {
+  const map = {'Italia':'🇮🇹','Francia':'🇫🇷','Olanda':'🇳🇱','Irlanda':'🇮🇪','Ucraina':'🇺🇦','USA':'🇺🇸','Portogallo':'🇵🇹'};
+  for(const [k,v] of Object.entries(map)) if(comm.includes(k)) return v;
+  if(comm.includes('Spagna')) return '🇪🇸';
+  if(comm.includes('Inghilterra')) return '🇬🇧';
+  return '🌍';
+}
+
+function renderMainTable() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('main-tbody');
+  document.getElementById('table-count').textContent = filtered.length + ' iscrizioni';
+  document.getElementById('empty-state').style.display = filtered.length === 0 ? 'block' : 'none';
+
+  tbody.innerHTML = filtered.map(r => `
+    <tr>
+      <td>
+        <div class="td-name">${r.husband}</div>
+        <div class="td-community">${r.wife}</div>
+      </td>
+      <td><span class="flag-badge">${langFlags(r.community)} ${r.community}</span></td>
+      <td style="color:var(--text3);font-size:12px">${r.num} pers.</td>
+      <td>${excBadge(r.excursions)}</td>
+      <td>${statusBadge(r.payStatus)}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--text3)">${r.cro || '—'}</td>
+      <td>
+        <div class="row-actions">
+          <button class="act-btn" onclick="openDetail(${r.id})">Dettagli</button>
+          <button class="act-btn" onclick="cycleStatus(${r.id})">Stato</button>
+          <button class="act-btn danger" onclick="deleteReg(${r.id})">✕</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function renderPayments() {
+  const tbody = document.getElementById('pay-tbody');
+  const total = registrations.length;
+  const paidReg = registrations.filter(r => r.payStatus === 'paid').length;
+  const paidExc = registrations.filter(r => r.excPayStatus === 'paid').length;
+  const regIncome = registrations.reduce((s,r) => s + (r.num <= 2 ? 360 : 360+(r.num-2)*180), 0);
+  const excIncome = registrations.reduce((s,r) => {
+    let t = 0;
+    if(r.excursions.includes('A')) t+=45*r.num;
+    if(r.excursions.includes('B')) t+=35*r.num;
+    if(r.excursions.includes('C')) t+=50*r.num;
+    return s+t;
+  }, 0);
+  document.getElementById('pay-reg-amount').textContent = '€ ' + regIncome.toLocaleString('it-IT');
+  document.getElementById('pay-reg-sub').textContent = paidReg + ' bonifici confermati su ' + total;
+  document.getElementById('pay-reg-prog').style.width = Math.round(paidReg/Math.max(total,1)*100)+'%';
+  document.getElementById('pay-exc-amount').textContent = '€ ' + excIncome.toLocaleString('it-IT');
+  document.getElementById('pay-exc-sub').textContent = paidExc + ' bonifici confermati su ' + total;
+  document.getElementById('pay-exc-prog').style.width = Math.round(paidExc/Math.max(total,1)*100)+'%';
+
+  tbody.innerHTML = registrations.map(r => `
+    <tr>
+      <td><div class="td-name">${r.husband}</div><div class="td-community">${r.wife}</div></td>
+      <td>${statusBadge(r.payStatus)}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--text3)">${r.cro||'—'}</td>
+      <td>${statusBadge(r.excPayStatus)}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--text3)">${r.croPay||'—'}</td>
+      <td>
+        <select class="status-select" onchange="updatePayStatus(${r.id}, this.value)">
+          <option value="missing" ${r.payStatus==='missing'?'selected':''}>Mancante</option>
+          <option value="pending" ${r.payStatus==='pending'?'selected':''}>In attesa</option>
+          <option value="paid" ${r.payStatus==='paid'?'selected':''}>Confermato</option>
+        </select>
+      </td>
+    </tr>`).join('');
+}
+
+function renderExcursions() {
+  const aP = registrations.filter(r=>r.excursions.includes('A')).reduce((s,r)=>s+r.num,0);
+  const bP = registrations.filter(r=>r.excursions.includes('B')).reduce((s,r)=>s+r.num,0);
+  const cP = registrations.filter(r=>r.excursions.includes('C')).reduce((s,r)=>s+r.num,0);
+  const aPaid = r=>r.excursions.includes('A')&&r.excPayStatus==='paid';
+  const bPaid = r=>r.excursions.includes('B')&&r.excPayStatus==='paid';
+  const cPaid = r=>r.excursions.includes('C')&&r.excPayStatus==='paid';
+
+  ['a','b','c'].forEach((l,i)=>{
+    const p = [aP,bP,cP][i], price=[45,35,50][i];
+    const paidCount = registrations.filter([aPaid,bPaid,cPaid][i]).reduce((s,r)=>s+r.num,0);
+    document.getElementById(`exc-${l}-p`).textContent = p;
+    document.getElementById(`exc-${l}-e`).textContent = '€ '+(p*price).toLocaleString('it-IT');
+    document.getElementById(`exc-${l}-paid`).textContent = paidCount + ' pers. pagato';
+    document.getElementById(`exc-${l}-cnt`).textContent = p + ' partecipanti';
+  });
+
+  document.getElementById('exc-tbody').innerHTML = registrations.map(r => `
+    <tr>
+      <td><div class="td-name">${r.husband}</div><div class="td-community">${r.wife}</div></td>
+      <td style="color:var(--text3)">${r.num} pers.</td>
+      <td>${r.excursions.includes('A') ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${r.excursions.includes('B') ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${r.excursions.includes('C') ? '<span style="color:var(--green)">✓</span>' : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${statusBadge(r.excPayStatus)}</td>
+    </tr>`).join('');
+}
+
+function renderFood() {
+  const count = (arr, key) => arr.filter(r => r[key] && r[key].toLowerCase().includes(key.split('-')[1])).length;
+  const c = (field, word) => registrations.filter(r => r[field] && r[field].toLowerCase().includes(word.toLowerCase())).length;
+  document.getElementById('f-hus-veg').textContent = c('intolH','vegetar');
+  document.getElementById('f-hus-vgn').textContent = c('intolH','vegan');
+  document.getElementById('f-hus-glu').textContent = c('intolH','gluten') + c('intolH','glutin');
+  document.getElementById('f-hus-dai').textContent = c('intolH','lattic');
+  document.getElementById('f-wif-veg').textContent = c('intolW','vegetar');
+  document.getElementById('f-wif-vgn').textContent = c('intolW','vegan');
+  document.getElementById('f-wif-glu').textContent = c('intolW','gluten') + c('intolW','glutin');
+  document.getElementById('f-wif-dai').textContent = c('intolW','lattic');
+  document.getElementById('f-chi-veg').textContent = c('intolC','vegetar');
+  document.getElementById('f-chi-vgn').textContent = c('intolC','vegan');
+  document.getElementById('f-chi-glu').textContent = c('intolC','gluten') + c('intolC','glutin');
+  document.getElementById('f-chi-dai').textContent = c('intolC','lattic');
+
+  document.getElementById('food-tbody').innerHTML = registrations.map(r => `
+    <tr>
+      <td><div class="td-name">${r.husband}</div><div class="td-community">${r.wife}</div></td>
+      <td style="font-size:12px;color:var(--text2)">${r.intolH||'<span style="color:var(--text3)">Nessuna</span>'}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.intolW||'<span style="color:var(--text3)">Nessuna</span>'}</td>
+      <td style="font-size:12px;color:var(--text2)">${r.intolC||'<span style="color:var(--text3)">—</span>'}</td>
+      <td style="font-size:12px;color:var(--text3)">${r.notes||'—'}</td>
+    </tr>`).join('');
+}
+
+function renderRecent() {
+  const recent = [...registrations].sort((a,b)=>b.id-a.id).slice(0,5);
+  document.getElementById('recent-tbody').innerHTML = recent.map(r => `
+    <tr>
+      <td><div class="td-name">${r.husband}</div><div style="font-size:11px;color:var(--text3)">${r.wife}</div></td>
+      <td><span class="flag-badge" style="font-size:11px">${langFlags(r.community)} ${r.community}</span></td>
+      <td>${statusBadge(r.payStatus)}</td>
+    </tr>`).join('');
+}
+
+function renderSummary() {
+  const regIncome = registrations.reduce((s,r) => s + (r.num<=2?360:360+(r.num-2)*180), 0);
+  const excIncome = registrations.reduce((s,r) => {
+    let t=0;
+    if(r.excursions.includes('A')) t+=45*r.num;
+    if(r.excursions.includes('B')) t+=35*r.num;
+    if(r.excursions.includes('C')) t+=50*r.num;
+    return s+t;
+  }, 0);
+  document.getElementById('sum-reg').textContent = '€ '+regIncome.toLocaleString('it-IT');
+  document.getElementById('sum-exc').textContent = '€ '+excIncome.toLocaleString('it-IT');
+  document.getElementById('sum-total').textContent = '€ '+(regIncome+excIncome).toLocaleString('it-IT');
+}
+
+// ── ACTIONS ─────────────────────────────────────────────────────
+function filterTable(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderMainTable();
+}
+
+function searchTable(q) {
+  searchQuery = q;
+  renderMainTable();
+}
+
+function cycleStatus(id) {
+  const r = registrations.find(x=>x.id===id);
+  if(!r) return;
+  const cycle = {missing:'pending', pending:'paid', paid:'missing'};
+  r.payStatus = cycle[r.payStatus];
+  saveData(); renderAll();
+  toast('Stato aggiornato: ' + r.husband, r.payStatus==='paid'?'green':r.payStatus==='pending'?'amber':'red');
+}
+
+function updatePayStatus(id, val) {
+  const r = registrations.find(x=>x.id===id);
+  if(!r) return;
+  r.payStatus = val;
+  saveData(); renderAll();
+  toast('Stato pagamento aggiornato', val==='paid'?'green':val==='pending'?'amber':'red');
+}
+
+function deleteReg(id) {
+  if(!confirm('Eliminare questa iscrizione?')) return;
+  registrations = registrations.filter(x=>x.id!==id);
+  saveData(); renderAll();
+  toast('Iscrizione eliminata', 'red');
+}
+
+// ── DETAIL PANEL ────────────────────────────────────────────────
+function openDetail(id) {
+  const r = registrations.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('panel-name').textContent = r.husband + ' & ' + r.wife.split(' ').pop();
+  document.getElementById('panel-content').innerHTML = `
+    <div class="panel-section">
+      <div class="panel-section-title">Dati personali</div>
+      <div class="panel-row"><span class="panel-key">Email</span><span class="panel-val">${r.email||'—'}</span></div>
+      <div class="panel-row"><span class="panel-key">Telefono</span><span class="panel-val">${r.phone||'—'}</span></div>
+      <div class="panel-row"><span class="panel-key">Comunità</span><span class="panel-val">${r.community}</span></div>
+      <div class="panel-row"><span class="panel-key">Partecipanti</span><span class="panel-val">${r.num} persone</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Pagamento iscrizione</div>
+      <div class="panel-row"><span class="panel-key">Stato</span><span class="panel-val">${statusBadge(r.payStatus)}</span></div>
+      <div class="panel-row"><span class="panel-key">CRO</span><span class="panel-val" style="font-family:monospace">${r.cro||'—'}</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Escursioni</div>
+      <div class="panel-row"><span class="panel-key">Scelte</span><span class="panel-val">${excBadge(r.excursions)}</span></div>
+      <div class="panel-row"><span class="panel-key">Pagamento esc.</span><span class="panel-val">${statusBadge(r.excPayStatus)}</span></div>
+      <div class="panel-row"><span class="panel-key">CRO esc.</span><span class="panel-val" style="font-family:monospace">${r.croPay||'—'}</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Alimentare</div>
+      <div class="panel-row"><span class="panel-key">Marito / Sacerdote</span><span class="panel-val">${r.intolH||'Nessuna'}</span></div>
+      <div class="panel-row"><span class="panel-key">Moglie</span><span class="panel-val">${r.intolW||'Nessuna'}</span></div>
+      <div class="panel-row"><span class="panel-key">Figli</span><span class="panel-val">${r.intolC||'—'}</span></div>
+    </div>
+    ${r.notes?`<div class="panel-section"><div class="panel-section-title">Note</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${r.notes}</div></div>`:''}
+    <div class="panel-actions">
+      <button class="btn btn-primary" onclick="quickConfirm(${r.id})">✓ Conferma pagamento</button>
+      <button class="btn btn-ghost" onclick="closePanel()">Chiudi</button>
+      <button class="btn btn-danger" onclick="deleteReg(${r.id});closePanel()">Elimina</button>
+    </div>`;
+  document.getElementById('panel-overlay').classList.add('show');
+}
+
+function quickConfirm(id) {
+  const r = registrations.find(x=>x.id===id);
+  if(r) { r.payStatus='paid'; saveData(); renderAll(); closePanel(); toast('✓ Pagamento confermato — '+r.husband,'green'); }
+}
+
+function closePanel() { document.getElementById('panel-overlay').classList.remove('show'); }
+
+// ── ADD MODAL ───────────────────────────────────────────────────
+function openAddModal() { document.getElementById('add-modal').classList.add('show'); }
+function closeAddModal() { document.getElementById('add-modal').classList.remove('show'); }
+
+function addRegistration() {
+  const h = document.getElementById('f-husband').value.trim();
+  const w = document.getElementById('f-wife').value.trim();
+  if(!h || !w) { toast('Inserisci almeno marito e moglie','red'); return; }
+  const excRaw = document.getElementById('f-exc').value.toUpperCase();
+  const excs = ['A','B','C'].filter(e => excRaw.includes(e));
+  const newReg = {
+    id: Date.now(), husband:h, wife:w,
+    email: document.getElementById('f-email').value.trim(),
+    phone: document.getElementById('f-phone').value.trim(),
+    community: document.getElementById('f-community').value || 'Altra comunità',
+    num: parseInt(document.getElementById('f-num').value) || 2,
+    payStatus: document.getElementById('f-paystatus').value,
+    cro: document.getElementById('f-cro').value.trim(),
+    excPayStatus: 'missing', croPay: '',
+    excursions: excs,
+    intolH: document.getElementById('f-intol-h').value.trim(),
+    intolW: document.getElementById('f-intol-w').value.trim(),
+    intolC: '',
+    notes: document.getElementById('f-notes').value.trim(),
+    date: new Date().toISOString().split('T')[0]
+  };
+  registrations.push(newReg);
+  saveData(); renderAll(); closeAddModal();
+  ['f-husband','f-wife','f-email','f-phone','f-cro','f-exc','f-intol-h','f-intol-w','f-notes'].forEach(id => document.getElementById(id).value='');
+  toast('Iscrizione aggiunta: '+h,'green');
+}
+
+// ── EXPORT CSV ──────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['ID','Marito','Moglie','Email','Telefono','Comunità','Persone','Stato Pag.','CRO Isc.','Escursioni','Stato Esc.','CRO Esc.','Intol. Marito','Intol. Moglie','Intol. Figli','Note','Data'];
+  const rows = registrations.map(r => [
+    r.id, r.husband, r.wife, r.email, r.phone, r.community, r.num,
+    r.payStatus, r.cro, r.excursions.join('+'), r.excPayStatus, r.croPay,
+    r.intolH, r.intolW, r.intolC, r.notes, r.date
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = 'iscrizioni-RE2026-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  toast('CSV esportato','green');
+}
+
+// ── TOAST ───────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='green') {
+  const t = document.getElementById('toast');
+  const d = document.getElementById('toast-dot');
+  const m = document.getElementById('toast-msg');
+  const colors = {green:'#27ae60', amber:'#e67e22', red:'#c0392b', gold:'#c9973a'};
+  d.style.background = colors[type]||colors.green;
+  m.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
