@@ -445,59 +445,63 @@ function prevFile(input,pid){const p=document.getElementById(pid),n=document.get
 function copyIban(id,btn){navigator.clipboard.writeText(document.getElementById(id).textContent.trim()).then(()=>{btn.textContent='✓ Copiato!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copia IBAN';btn.classList.remove('copied');},2000);});}
 function clrErr(){document.getElementById('cro-err').classList.remove('show');}
 
-async function submitForm(){
+function submitForm(){
   const c1=document.getElementById('cro1').value.trim(),c2=document.getElementById('cro2').value.trim();
   const f1=document.getElementById('fi1')?.files.length>0,f2=document.getElementById('fi2')?.files.length>0;
   if(!c1&&!c2&&!f1&&!f2){const err=document.getElementById('cro-err');err.classList.add('show');err.scrollIntoView({behavior:'smooth',block:'center'});return;}
 
-  document.getElementById('sending').classList.add('show');
+  // Raccogli lingue — ogni lingua e' un parametro separato per Google Forms
+  const lingueParams=[];
+  if(document.getElementById('l-it')?.checked)lingueParams.push('entry.169551137=Italiano');
+  if(document.getElementById('l-en')?.checked)lingueParams.push('entry.169551137=English');
+  if(document.getElementById('l-fr')?.checked)lingueParams.push('entry.169551137=Fran%C3%A7ais');
+  if(document.getElementById('l-es')?.checked)lingueParams.push('entry.169551137=Espa%C3%B1ol');
+  if(document.getElementById('l-pt')?.checked)lingueParams.push('entry.169551137=Portugu%C3%AAs');
 
-  // Raccogli lingue
-  const lingue=[];
-  if(document.getElementById('l-it')?.checked)lingue.push('Italiano');
-  if(document.getElementById('l-en')?.checked)lingue.push('English');
-  if(document.getElementById('l-fr')?.checked)lingue.push('Français');
-  if(document.getElementById('l-es')?.checked)lingue.push('Español');
-  if(document.getElementById('l-pt')?.checked)lingue.push('Português');
+  // Raccogli escursioni — ogni escursione e' un parametro separato
+  const escParams=[];
+  if(escs['e1'])escParams.push('entry.453307825=Escursione+A');
+  if(escs['e2'])escParams.push('entry.453307825=Escursione+B');
+  if(escs['e3'])escParams.push('entry.453307825=Escursione+C');
+  if(escParams.length===0)escParams.push('entry.453307825=Nessuna');
 
-  // Raccogli escursioni
-  const escSel=[];
-  if(escs['e1'])escSel.push('Escursione A');
-  if(escs['e2'])escSel.push('Escursione B');
-  if(escs['e3'])escSel.push('Escursione C');
+  // Raccogli intolleranze — ogni intolleranza e' un parametro separato
+  const intolHp=[];
+  const intolWp=[];
+  const intolCp=[];
+  [['im-no','im-vg','im-vn','im-gl','im-la'],['iw-no','iw-vg','iw-vn','iw-gl','iw-la'],['ic-no','ic-vg','ic-vn','ic-gl','ic-la']].forEach((ids,idx)=>{
+    const arr=idx===0?intolHp:idx===1?intolWp:intolCp;
+    const entry=idx===0?'entry.1942889061':idx===1?'entry.1243672349':'entry.1966966485';
+    ids.forEach(id=>{const el=document.getElementById(id);if(el?.checked)arr.push(entry+'='+encodeURIComponent(el.nextElementSibling.textContent.trim()));});
+    if(arr.length===0)arr.push(entry+'=Nessuna');
+  });
 
-  // Raccogli intolleranze
-  const getIntol=(ids)=>{const r=[];ids.forEach(id=>{const el=document.getElementById(id);if(el?.checked)r.push(el.nextElementSibling.textContent.trim());});return r.join(', ')||'Nessuna';};
-  const intolH=getIntol(['im-no','im-vg','im-vn','im-gl','im-la']);
-  const intolW=getIntol(['iw-no','iw-vg','iw-vn','iw-gl','iw-la']);
-  const intolC=getIntol(['ic-no','ic-vg','ic-vn','ic-gl','ic-la']);
-
-  const statoPag=c1||c2?'Bonifico effettuato':'Lo farò a breve';
   const trad=document.querySelector('input[name=trad]:checked')?.nextElementSibling?.textContent||'';
+  const statoPag=c1||c2?'Bonifico+effettuato':'Lo+far%C3%B2+a+breve';
 
-  const fd=new FormData();
-  fd.append('entry.189782662', document.getElementById('f-email')?.value||'');
-  fd.append('entry.2013253975', document.getElementById('f-phone')?.value||'');
-  fd.append('entry.1492601453', document.getElementById('f-husband')?.value||'');
-  fd.append('entry.2087608352', document.getElementById('f-wife')?.value||'');
-  fd.append('entry.1414443451', document.getElementById('f-priest')?.value||'');
-  fd.append('entry.959371884', document.getElementById('f-community')?.value||'');
-  fd.append('entry.1436739036', document.getElementById('numP')?.value||'');
-  fd.append('entry.169551137', lingue.join(', ')||'');
-  fd.append('entry.1890854306', trad);
-  fd.append('entry.979665172', document.getElementById('f-checkin')?.value||'');
-  fd.append('entry.1797439006', document.getElementById('f-time')?.value||'');
-  fd.append('entry.1429849915', document.getElementById('f-checkout')?.value||'');
-  fd.append('entry.1942889061', intolH);
-  fd.append('entry.1243672349', intolW);
-  fd.append('entry.1966966485', intolC);
-  fd.append('entry.1509954747', statoPag);
-  fd.append('entry.453307825', escSel.join(', ')||'Nessuna');
-  fd.append('entry.865436514', c1||c2||'');
+  const base='https://docs.google.com/forms/d/e/1FAIpQLSe83vmILM7FWzQ7UPT8s23uIrsBEUZKszOwpMUysaxwgjqc5g/viewform?usp=pp_url';
+  const params=[
+    'entry.189782662='+encodeURIComponent(document.getElementById('f-email')?.value||''),
+    'entry.2013253975='+encodeURIComponent(document.getElementById('f-phone')?.value||''),
+    'entry.1492601453='+encodeURIComponent(document.getElementById('f-husband')?.value||''),
+    'entry.2087608352='+encodeURIComponent(document.getElementById('f-wife')?.value||''),
+    'entry.1414443451='+encodeURIComponent(document.getElementById('f-priest')?.value||''),
+    'entry.959371884='+encodeURIComponent(document.getElementById('f-community')?.value||''),
+    'entry.1436739036='+encodeURIComponent(document.getElementById('numP')?.value||''),
+    ...lingueParams,
+    'entry.1890854306='+encodeURIComponent(trad),
+    'entry.979665172='+encodeURIComponent(document.getElementById('f-checkin')?.value||''),
+    'entry.1797439006='+encodeURIComponent(document.getElementById('f-time')?.value||''),
+    'entry.1429849915='+encodeURIComponent(document.getElementById('f-checkout')?.value||''),
+    ...intolHp,
+    ...intolWp,
+    ...intolCp,
+    'entry.1509954747='+statoPag,
+    ...escParams,
+    'entry.865436514='+encodeURIComponent(c1||c2||'')
+  ].join('&');
 
-  try{await fetch(FORMS_URL,{method:'POST',mode:'no-cors',body:fd});}catch(e){}
-
-  document.getElementById('sending').classList.remove('show');
+  window.open(base+'&'+params,'_blank');
   document.getElementById('overlay').classList.add('show');
 }
 </script>
